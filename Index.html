@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beleza & Estilo | Salão de Beleza</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Beleza & Estilo</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#servicos">Serviços</a></li>
+                <li><a href="#profissionais">Profissionais</a></li>
+                <li><a href="#agendamento">Agendar</a></li>
+                <li><a href="#admin">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
 
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Realce sua beleza com nossos profissionais</h1>
+            <p>Agende já seu horário e descubra o poder da transformação</p>
+            <a href="#agendamento" class="btn">Agendar Agora</a>
+        </div>
+    </section>
+
+    <section id="servicos">
+        <h2 class="section-title">Nossos Serviços</h2>
+        <div class="services-grid" id="services-list"></div>
+    </section>
+
+    <section id="profissionais">
+        <h2 class="section-title">Nossos Profissionais</h2>
+        <div class="professionals-grid" id="professionals-list"></div>
+    </section>
+
+    <section id="agendamento">
+        <h2 class="section-title">Agendamento Online</h2>
+        <div class="appointment-container">
+            <form id="appointment-form" class="appointment-form">
+                <div class="form-group">
+                    <label for="nome">Nome completo *</label>
+                    <input type="text" id="nome" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-mail *</label>
+                    <input type="email" id="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefone">Telefone *</label>
+                    <input type="tel" id="telefone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="servico">Serviço *</label>
+                    <select id="servico" required>
+                        <option value="">Selecione um serviço</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="profissional">Profissional *</label>
+                    <select id="profissional" required>
+                        <option value="">Selecione um profissional</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="data">Data *</label>
+                    <input type="date" id="data" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="hora">Horário *</label>
+                    <input type="time" id="hora" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="observacoes">Observações</label>
+                    <textarea id="observacoes" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group" style="grid-column: 1/-1;">
+                    <button type="submit" class="btn" style="width: 100%;">Agendar</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section id="admin">
+        <h2 class="section-title">Área Administrativa</h2>
+        <div class="admin-panel">
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="showTab('agendamentos')">Agendamentos</button>
+                <button class="tab-btn" onclick="showTab('servicos-admin')">Serviços</button>
+                <button class="tab-btn" onclick="showTab('profissionais-admin')">Profissionais</button>
+            </div>
+            
+            <div id="agendamentos" class="tab-content active">
+                <h3>Agendamentos</h3>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Serviço</th>
+                            <th>Profissional</th>
+                            <th>Data/Hora</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointments-list"></tbody>
+                </table>
+            </div>
+            
+            <div id="servicos-admin" class="tab-content" style="display: none;">
+                <h3>Gerenciar Serviços</h3>
+                <button class="btn" onclick="openServiceModal()">Novo Serviço</button>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Duração</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="services-admin-list"></tbody>
+                </table>
+            </div>
+            
+            <div id="profissionais-admin" class="tab-content" style="display: none;">
+                <h3>Gerenciar Profissionais</h3>
+                <button class="btn" onclick="openProfessionalModal()">Novo Profissional</button>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Especialidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="professionals-admin-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal para edição -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Editar</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Beleza & Estilo. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

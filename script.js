@@ -1,58 +1,73 @@
+// ===== CONFIGURAÇÃO =====
+const GITHUB_USER = "RAQUELPMU"; // Coloque seu nome de usuário do GitHub
+const REPO_NAME = "RAQUELPMU"; // O nome que você deu ao repositório
+const API_URL = `https://my-json-server.typicode.com/${GITHUB_USER}/${REPO_NAME}`;
+
 let services = [];
 let professionals = [];
 let appointments = [];
 let ADMIN_PASSWORD = "247126Ca";
 let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
-
-// Número do WhatsApp
 const WHATSAPP_NUMBER = "5521992649522";
 
-// ===== FUNÇÕES DO localStorage =====
-function salvarDados() {
-    localStorage.setItem('servicos', JSON.stringify(services));
-    localStorage.setItem('profissionais', JSON.stringify(professionals));
-    localStorage.setItem('agendamentos', JSON.stringify(appointments));
-    console.log('✅ Dados salvos com sucesso!');
+// ===== CARREGAR DADOS DA API =====
+async function carregarDados() {
+    try {
+        console.log('🔄 Carregando dados da API...');
+        
+        // Carrega serviços
+        const servicesRes = await fetch(`${API_URL}/services`);
+        services = await servicesRes.json();
+        console.log('✅ Serviços carregados:', services.length);
+        
+        // Carrega profissionais
+        const profRes = await fetch(`${API_URL}/professionals`);
+        professionals = await profRes.json();
+        console.log('✅ Profissionais carregados:', professionals.length);
+        
+        // Carrega agendamentos
+        const aptRes = await fetch(`${API_URL}/appointments`);
+        appointments = await aptRes.json();
+        console.log('✅ Agendamentos carregados:', appointments.length);
+        
+        // Atualiza a tela
+        renderServices();
+        renderProfessionals();
+        if (isLoggedIn) renderAdminTables();
+        
+    } catch (erro) {
+        console.error('❌ Erro ao carregar dados:', erro);
+        alert('Erro ao conectar com o servidor. Verifique sua internet.');
+    }
 }
 
-function carregarDados() {
-    // Tenta carregar do localStorage
-    const servicosSalvos = localStorage.getItem('servicos');
-    const profSalvos = localStorage.getItem('profissionais');
-    const aptSalvos = localStorage.getItem('agendamentos');
-    
-    if (servicosSalvos) {
-        services = JSON.parse(servicosSalvos);
-        console.log('✅ Serviços carregados do localStorage');
-    } else {
-        // Se não tiver nada salvo, usa os dados iniciais
-        services = [
-            { id: 1, name: 'Corte de Cabelo', price: 50, duration: 60, image: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?w=500' },
-            { id: 2, name: 'Coloração', price: 120, duration: 120, image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500' },
-            { id: 3, name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500' },
-            { id: 4, name: 'Pedicure', price: 40, duration: 45, image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500' },
-            { id: 5, name: 'Maquiagem', price: 80, duration: 60, image: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=500' },
-            { id: 6, name: 'Escova', price: 45, duration: 60, image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500' }
-        ];
-        salvarDados(); // Salva os dados iniciais
-    }
-    
-    if (profSalvos) {
-        professionals = JSON.parse(profSalvos);
-        console.log('✅ Profissionais carregados do localStorage');
-    } else {
-        professionals = [
-            { id: 1, name: 'Ana Silva', specialty: 'Cabelos', image: 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500' },
-            { id: 2, name: 'Maria Oliveira', specialty: 'Maquiagem', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500' },
-            { id: 3, name: 'João Santos', specialty: 'Barba', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500' },
-            { id: 4, name: 'Carla Souza', specialty: 'Unhas', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500' }
-        ];
-        salvarDados();
-    }
-    
-    if (aptSalvos) {
-        appointments = JSON.parse(aptSalvos);
-        console.log('✅ Agendamentos carregados do localStorage');
+// ===== SALVAR DADOS NA API =====
+async function salvarDados(tipo, metodo, dados, id = null) {
+    try {
+        let url = `${API_URL}/${tipo}`;
+        let options = {
+            method: metodo,
+            headers: { 'Content-Type': 'application/json' }
+        };
+        
+        if (dados) {
+            options.body = JSON.stringify(dados);
+        }
+        
+        if (id) {
+            url = `${API_URL}/${tipo}/${id}`;
+        }
+        
+        const response = await fetch(url, options);
+        const resultado = await response.json();
+        console.log(`✅ Dados salvos em ${tipo}:`, resultado);
+        
+        // Recarrega tudo para garantir consistência
+        await carregarDados();
+        
+    } catch (erro) {
+        console.error('❌ Erro ao salvar:', erro);
+        alert('Erro ao salvar. Tente novamente.');
     }
 }
 
@@ -152,9 +167,7 @@ function renderAdminTables() {
 
 // ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', function() {
-    carregarDados(); // CARREGA OS DADOS SALVOS
-    renderServices();
-    renderProfessionals();
+    carregarDados(); // CARREGA DA API ONLINE
     
     const heroButton = document.querySelector('.hero-buttons .btn:first-child');
     if (heroButton) {
@@ -167,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isLoggedIn) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
-        renderAdminTables();
     }
 });
 
@@ -241,7 +253,7 @@ function openServiceModal(service = null) {
     modal.classList.add('active');
 }
 
-function saveService(event, id) {
+async function saveService(event, id) {
     event.preventDefault();
     
     const serviceData = {
@@ -252,27 +264,22 @@ function saveService(event, id) {
     };
     
     if (id) {
-        const index = services.findIndex(s => s.id == id);
-        services[index] = { ...services[index], ...serviceData };
+        // EDITAR
+        await salvarDados('services', 'PUT', serviceData, id);
     } else {
+        // NOVO
         serviceData.id = services.length + 1;
-        services.push(serviceData);
+        await salvarDados('services', 'POST', serviceData);
     }
     
-    renderServices();
-    renderAdminTables();
-    salvarDados(); // SALVA NO LOCALSTORAGE
     closeModal();
     alert('✅ Serviço salvo com sucesso!');
 }
 
-function deleteService(id) {
+async function deleteService(id) {
     if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja excluir este serviço?')) {
-        services = services.filter(s => s.id != id);
-        renderServices();
-        renderAdminTables();
-        salvarDados(); // SALVA NO LOCALSTORAGE
+        await salvarDados('services', 'DELETE', null, id);
         alert('✅ Serviço excluído com sucesso!');
     }
 }
@@ -306,7 +313,7 @@ function openProfessionalModal(professional = null) {
     modal.classList.add('active');
 }
 
-function saveProfessional(event, id) {
+async function saveProfessional(event, id) {
     event.preventDefault();
     
     const professionalData = {
@@ -316,27 +323,20 @@ function saveProfessional(event, id) {
     };
     
     if (id) {
-        const index = professionals.findIndex(p => p.id == id);
-        professionals[index] = { ...professionals[index], ...professionalData };
+        await salvarDados('professionals', 'PUT', professionalData, id);
     } else {
         professionalData.id = professionals.length + 1;
-        professionals.push(professionalData);
+        await salvarDados('professionals', 'POST', professionalData);
     }
     
-    renderProfessionals();
-    renderAdminTables();
-    salvarDados(); // SALVA NO LOCALSTORAGE
     closeModal();
     alert('✅ Profissional salvo com sucesso!');
 }
 
-function deleteProfessional(id) {
+async function deleteProfessional(id) {
     if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja excluir este profissional?')) {
-        professionals = professionals.filter(p => p.id != id);
-        renderProfessionals();
-        renderAdminTables();
-        salvarDados(); // SALVA NO LOCALSTORAGE
+        await salvarDados('professionals', 'DELETE', null, id);
         alert('✅ Profissional excluído com sucesso!');
     }
 }
@@ -347,12 +347,10 @@ function editAppointment(id) {
     alert('Funcionalidade em desenvolvimento');
 }
 
-function deleteAppointment(id) {
+async function deleteAppointment(id) {
     if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
-        appointments = appointments.filter(a => a.id != id);
-        renderAdminTables();
-        salvarDados(); // SALVA NO LOCALSTORAGE
+        await salvarDados('appointments', 'DELETE', null, id);
         alert('✅ Agendamento cancelado!');
     }
 }

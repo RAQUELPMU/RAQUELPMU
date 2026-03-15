@@ -8,36 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Barra de endereço superior -->
-    <div class="top-bar">
-        <div class="top-bar-content">
-            <div class="contact-info">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Rua Jaime Perdigão, 353 - Ilha do Governador, Rio de Janeiro - RJ - CEP: 21920-240</span>
-            </div>
-            <div class="contact-info">
-                <i class="fas fa-phone"></i>
-                <span>(21) 1234-5678</span>
-            </div>
-            <div class="contact-info">
-                <i class="fas fa-clock"></i>
-                <span>Seg-Sáb: 9h às 20h | Dom: Fechado</span>
-            </div>
-        </div>
-    </div>
-
     <header>
         <nav>
-            <div class="logo">
-                Beleza & Estilo
-                <span class="logo-location">Ilha do Governador</span>
-            </div>
+            <div class="logo">Beleza & Estilo</div>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#servicos">Serviços</a></li>
                 <li><a href="#profissionais">Profissionais</a></li>
                 <li><a href="#localizacao">Localização</a></li>
-                <li><a href="#agendamento">Agendar</a></li>
                 <li><a href="#admin">Admin</a></li>
             </ul>
         </nav>
@@ -51,25 +29,24 @@
             </p>
             <p>Agende já seu horário e descubra o poder da transformação</p>
             <div class="hero-buttons">
-                <a href="#agendamento" class="btn">Agendar Agora</a>
+                <a href="https://wa.me/552112345678?text=Olá! Gostaria de agendar um horário no salão" target="_blank" class="btn">
+                    <i class="fab fa-whatsapp"></i> Agendar Agora
+                </a>
                 <a href="#localizacao" class="btn btn-outline">Como Chegar</a>
             </div>
         </div>
     </section>
 
-    <!-- Seção de Serviços -->
     <section id="servicos">
-        <h2 class="section-title">Nossos Serviços na Ilha</h2>
+        <h2 class="section-title">Nossos Serviços</h2>
         <div class="services-grid" id="services-list"></div>
     </section>
 
-    <!-- Seção de Profissionais -->
     <section id="profissionais">
         <h2 class="section-title">Nossos Profissionais</h2>
         <div class="professionals-grid" id="professionals-list"></div>
     </section>
 
-    <!-- Seção de Localização -->
     <section id="localizacao">
         <h2 class="section-title">Nossa Localização</h2>
         <div class="location-container">
@@ -85,7 +62,7 @@
                 
                 <div class="info-card">
                     <i class="fas fa-clock"></i>
-                    <h3>Horário de Funcionamento</h3>
+                    <h3>Horário</h3>
                     <p>Segunda a Sexta: 9h às 20h</p>
                     <p>Sábado: 9h às 18h</p>
                     <p>Domingo: Fechado</p>
@@ -96,22 +73,20 @@
                     <h3>Contato</h3>
                     <p>Tel: (21) 1234-5678</p>
                     <p>WhatsApp: (21) 98765-4321</p>
-                    <p>Email: contato@belezailha.com.br</p>
                 </div>
                 
                 <div class="info-card">
                     <i class="fas fa-bus"></i>
                     <h3>Como Chegar</h3>
-                    <p>Ônibus: 321, 322, 323 (ponto em frente)</p>
+                    <p>Ônibus: 321, 322, 323</p>
                     <p>Barca: Estação Praça XV - Ilha</p>
-                    <p>Estacionamento gratuito no local</p>
+                    <p>Estacionamento gratuito</p>
                 </div>
             </div>
             
-            <!-- Mapa -->
             <div class="map-container">
                 <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.3563636363635!2d-43.2772!3d-22.8008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDQ4JzAyLjkiUyA0M8KwMTYnMzcuOSJX!5e0!3m2!1spt-BR!2sbr!4v1641234567890!5m2!1spt-BR!2sbr" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.5504!2d-43.279495!3d-22.805279!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997c3849b6b6b7%3A0x7b9c7d5e8f5e5e5e!2sRua%20Jaime%20Perdig%C3%A3o%2C%20353%20-%20Freguesia%20(Ilha%20do%20Governador)%2C%20Rio%20de%20Janeiro%20-%20RJ!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" 
                     width="100%" 
                     height="400" 
                     style="border:0; border-radius: 15px;" 
@@ -122,67 +97,9 @@
         </div>
     </section>
 
-    <!-- Seção de Agendamento -->
-    <section id="agendamento">
-        <h2 class="section-title">Agendamento Online</h2>
-        <div class="appointment-container">
-            <form id="appointment-form" class="appointment-form">
-                <div class="form-group">
-                    <label for="nome">Nome completo *</label>
-                    <input type="text" id="nome" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">E-mail *</label>
-                    <input type="email" id="email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="telefone">Telefone *</label>
-                    <input type="tel" id="telefone" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="servico">Serviço *</label>
-                    <select id="servico" required>
-                        <option value="">Selecione um serviço</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="profissional">Profissional *</label>
-                    <select id="profissional" required>
-                        <option value="">Selecione um profissional</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="data">Data *</label>
-                    <input type="date" id="data" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="hora">Horário *</label>
-                    <input type="time" id="hora" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="observacoes">Observações</label>
-                    <textarea id="observacoes" rows="3"></textarea>
-                </div>
-                
-                <div class="form-group" style="grid-column: 1/-1;">
-                    <button type="submit" class="btn" style="width: 100%;">Agendar</button>
-                </div>
-            </form>
-        </div>
-    </section>
-
-    <!-- Seção Admin com Login -->
     <section id="admin">
         <h2 class="section-title">Área Administrativa</h2>
         
-        <!-- Tela de Login -->
         <div id="login-screen" class="login-container">
             <div class="login-box">
                 <h3>Acesso Restrito</h3>
@@ -191,11 +108,10 @@
                     <input type="password" id="admin-password" placeholder="Digite a senha" class="login-input">
                     <button onclick="checkPassword()" class="btn login-btn">Entrar</button>
                 </div>
-                <p id="login-error" class="error-message" style="display: none; color: red; margin-top: 1rem;">Senha incorreta!</p>
+                <p id="login-error" class="error-message" style="display: none;">Senha incorreta!</p>
             </div>
         </div>
         
-        <!-- Painel Admin (inicialmente oculto) -->
         <div id="admin-panel" class="admin-panel" style="display: none;">
             <div class="admin-header">
                 <h3>Bem-vindo, Administrador!</h3>
@@ -206,7 +122,6 @@
                 <button class="tab-btn active" onclick="showTab('agendamentos')">Agendamentos</button>
                 <button class="tab-btn" onclick="showTab('servicos-admin')">Serviços</button>
                 <button class="tab-btn" onclick="showTab('profissionais-admin')">Profissionais</button>
-                <button class="tab-btn" onclick="showTab('configuracoes')">Configurações</button>
             </div>
             
             <div id="agendamentos" class="tab-content active">
@@ -256,30 +171,9 @@
                     <tbody id="professionals-admin-list"></tbody>
                 </table>
             </div>
-            
-            <div id="configuracoes" class="tab-content" style="display: none;">
-                <h3>Configurações</h3>
-                <div class="config-card">
-                    <h4>Alterar Senha</h4>
-                    <div class="form-group">
-                        <label>Senha atual</label>
-                        <input type="password" id="current-password">
-                    </div>
-                    <div class="form-group">
-                        <label>Nova senha</label>
-                        <input type="password" id="new-password">
-                    </div>
-                    <div class="form-group">
-                        <label>Confirmar nova senha</label>
-                        <input type="password" id="confirm-password">
-                    </div>
-                    <button onclick="changePassword()" class="btn">Alterar Senha</button>
-                </div>
-            </div>
         </div>
     </section>
 
-    <!-- Modal para edição -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -294,7 +188,7 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h4>Beleza & Estilo</h4>
-                <p>Seu salão de confiança na Ilha do Governador</p>
+                <p>Seu salão na Ilha do Governador</p>
             </div>
             <div class="footer-section">
                 <h4>Endereço</h4>
@@ -306,7 +200,6 @@
                 <h4>Contato</h4>
                 <p>Tel: (21) 1234-5678</p>
                 <p>WhatsApp: (21) 98765-4321</p>
-                <p>Email: contato@belezailha.com.br</p>
             </div>
             <div class="footer-section">
                 <h4>Horário</h4>
@@ -316,10 +209,10 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 Beleza & Estilo - Ilha do Governador. Todos os direitos reservados.</p>
+            <p>&copy; 2024 Beleza & Estilo - Ilha do Governador</p>
         </div>
     </footer>
 
     <script src="script.js"></script>
 </body>
-                </html>
+</html>

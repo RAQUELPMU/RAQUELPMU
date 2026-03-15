@@ -1,6 +1,3 @@
-// Mesmo código do script.js anterior, apenas removendo a parte do formulário de agendamento
-// Pois agora os agendamentos serão feitos via WhatsApp
-
 let services = [
     { id: 1, name: 'Corte de Cabelo', price: 50, duration: 60, image: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?w=500' },
     { id: 2, name: 'Coloração', price: 120, duration: 120, image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500' },
@@ -18,48 +15,61 @@ let professionals = [
 ];
 
 let appointments = [];
-
 let ADMIN_PASSWORD = "247126Ca";
 let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+
+// Número do WhatsApp atualizado
+const WHATSAPP_NUMBER = "5521992649522"; // (21) 99264-9522
 
 function renderServices() {
     const container = document.getElementById('services-list');
     if (!container) return;
     
-    container.innerHTML = services.map(service => `
-        <div class="service-card">
-            <div class="service-img" style="background-image: url('${service.image}')"></div>
-            <div class="service-content">
-                <h3>${service.name}</h3>
-                <p class="service-price">R$ ${service.price}</p>
-                <p>Duração: ${service.duration} min</p>
-                <a href="https://wa.me/5521987654321?text=Olá! Gostaria de agendar ${service.name} com duração de ${service.duration} minutos" 
-                   target="_blank" 
-                   class="btn whatsapp-btn">
-                    <i class="fab fa-whatsapp"></i> Agendar via WhatsApp
-                </a>
+    container.innerHTML = services.map(service => {
+        const mensagem = `Olá! Gostaria de agendar ${service.name} com duração de ${service.duration} minutos.`;
+        const linkWhatsApp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
+        
+        return `
+            <div class="service-card">
+                <div class="service-img" style="background-image: url('${service.image}')"></div>
+                <div class="service-content">
+                    <h3>${service.name}</h3>
+                    <p class="service-price">R$ ${service.price}</p>
+                    <p>Duração: ${service.duration} min</p>
+                    <a href="${linkWhatsApp}" target="_blank" class="btn whatsapp-btn">
+                        <i class="fab fa-whatsapp"></i> Agendar via WhatsApp
+                    </a>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function renderProfessionals() {
     const container = document.getElementById('professionals-list');
     if (!container) return;
     
-    container.innerHTML = professionals.map(prof => `
-        <div class="professional-card">
-            <div class="professional-img" style="background-image: url('${prof.image}')"></div>
-            <h3>${prof.name}</h3>
-            <p>Especialidade: ${prof.specialty}</p>
-            <a href="https://wa.me/5521987654321?text=Olá! Gostaria de agendar com ${prof.name} (${prof.specialty})" 
-               target="_blank" 
-               class="btn whatsapp-btn" 
-               style="margin-top: 1rem;">
-                <i class="fab fa-whatsapp"></i> Agendar
-            </a>
-        </div>
-    `).join('');
+    container.innerHTML = professionals.map(prof => {
+        const mensagem = `Olá! Gostaria de agendar um horário com ${prof.name} (especialidade: ${prof.specialty}).`;
+        const linkWhatsApp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
+        
+        return `
+            <div class="professional-card">
+                <div class="professional-img" style="background-image: url('${prof.image}')"></div>
+                <h3>${prof.name}</h3>
+                <p>Especialidade: ${prof.specialty}</p>
+                <a href="${linkWhatsApp}" target="_blank" class="btn whatsapp-btn" style="margin-top: 1rem;">
+                    <i class="fab fa-whatsapp"></i> Agendar com ${prof.name}
+                </a>
+            </div>
+        `;
+    }).join('');
+}
+
+function agendarWhatsApp() {
+    const mensagem = "Olá! Gostaria de agendar um horário no salão.";
+    const link = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
+    window.open(link, '_blank');
 }
 
 function renderAdminTables() {
@@ -113,6 +123,15 @@ function renderAdminTables() {
 document.addEventListener('DOMContentLoaded', function() {
     renderServices();
     renderProfessionals();
+    
+    // Adicionar evento ao botão Agendar Agora do topo
+    const btnAgendar = document.querySelector('a[href="#agendamento"]');
+    if (btnAgendar) {
+        btnAgendar.addEventListener('click', function(e) {
+            e.preventDefault();
+            agendarWhatsApp();
+        });
+    }
     
     if (isLoggedIn) {
         document.getElementById('login-screen').style.display = 'none';

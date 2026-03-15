@@ -29,7 +29,7 @@
             </p>
             <p>Agende já seu horário e descubra o poder da transformação</p>
             <div class="hero-buttons">
-                <a href="https://wa.me/552112345678?text=Olá! Gostaria de agendar um horário no salão" target="_blank" class="btn">
+                <a href="#" onclick="agendarWhatsApp(); return false;" class="btn">
                     <i class="fab fa-whatsapp"></i> Agendar Agora
                 </a>
                 <a href="#localizacao" class="btn btn-outline">Como Chegar</a>
@@ -48,7 +48,7 @@
     </section>
 
     <section id="localizacao">
-        <h2 class="section-title">Nossa Localização</h2>
+        <h2 class="section-title">Como Chegar</h2>
         <div class="location-container">
             <div class="location-info">
                 <div class="info-card">
@@ -58,41 +58,107 @@
                     <p>Ilha do Governador</p>
                     <p>Rio de Janeiro - RJ</p>
                     <p>CEP: 21920-240</p>
+                    <a href="https://www.google.com/maps/dir//Rua+Jaime+Perdigão,+353+-+Freguesia+(Ilha+do+Governador),+Rio+de+Janeiro+-+RJ,+21920-240" 
+                       target="_blank" 
+                       class="btn btn-small" 
+                       style="margin-top: 1rem; background: #ff6b6b;">
+                        <i class="fas fa-directions"></i> Abrir no Maps
+                    </a>
                 </div>
                 
                 <div class="info-card">
                     <i class="fas fa-clock"></i>
                     <h3>Horário</h3>
-                    <p>Segunda a Sexta: 9h às 20h</p>
-                    <p>Sábado: 9h às 18h</p>
-                    <p>Domingo: Fechado</p>
+                    <p>⏰ Segunda a Sexta: 9h às 20h</p>
+                    <p>⏰ Sábado: 9h às 18h</p>
+                    <p>🚫 Domingo: Fechado</p>
                 </div>
                 
                 <div class="info-card">
                     <i class="fas fa-phone-alt"></i>
                     <h3>Contato</h3>
-                    <p>Tel: (21) 1234-5678</p>
-                    <p>WhatsApp: (21) 98765-4321</p>
+                    <p>📞 Tel: (21) 1234-5678</p>
+                    <p>📱 WhatsApp: (21) 99264-9522</p>
+                    <a href="https://wa.me/5521992649522" target="_blank" class="btn whatsapp-btn" style="margin-top: 1rem;">
+                        <i class="fab fa-whatsapp"></i> Chamar no WhatsApp
+                    </a>
                 </div>
                 
                 <div class="info-card">
                     <i class="fas fa-bus"></i>
-                    <h3>Como Chegar</h3>
-                    <p>Ônibus: 321, 322, 323</p>
-                    <p>Barca: Estação Praça XV - Ilha</p>
-                    <p>Estacionamento gratuito</p>
+                    <h3>🚌 Como Chegar de Ônibus</h3>
+                    <p><strong>Linhas que passam:</strong></p>
+                    <p>• 321 - Terminal Gentileza × Ilha</p>
+                    <p>• 322 - Candelária × Ilha</p>
+                    <p>• 323 - Castelo × Ilha</p>
+                    <p>• 324 - Bonsucesso × Ilha</p>
+                    <p>• 325 - Saens Pena × Ilha</p>
+                    <p><strong>Ponto:</strong> Em frente ao salão</p>
+                </div>
+                
+                <div class="info-card">
+                    <i class="fas fa-ship"></i>
+                    <h3>⛴️ Como Chegar de Barca</h3>
+                    <p><strong>Trajeto:</strong> Praça XV → Ilha do Governador</p>
+                    <p><strong>Tempo de travessia:</strong> 20 minutos</p>
+                    <p><strong>Da estação das barcas:</strong></p>
+                    <p>• Ônibus 321, 322 ou 323</p>
+                    <p>• 10 minutos até o salão</p>
+                    <p><strong>Frequência:</strong> A cada 30 minutos</p>
+                </div>
+                
+                <div class="info-card">
+                    <i class="fas fa-car"></i>
+                    <h3>🚗 Como Chegar de Carro</h3>
+                    <p><strong>Da Zona Sul:</strong></p>
+                    <p>• Ponte Rio-Niterói → Linha Vermelha</p>
+                    <p>• Saída para Ilha do Governador</p>
+                    <p>• Siga pela Estrada do Galeão</p>
+                    <p> </p>
+                    <p><strong>Da Zona Norte:</strong></p>
+                    <p>• Linha Vermelha sentido Ilha</p>
+                    <p>• Saída para Freguesia</p>
+                    <p> </p>
+                    <p><strong>Estacionamento:</strong> Grátis no local</p>
+                </div>
+                
+                <div class="info-card">
+                    <i class="fas fa-taxi"></i>
+                    <h3>🚕 Aplicativos</h3>
+                    <p><strong>Uber:</strong> Salão Beleza & Estilo</p>
+                    <p><strong>99:</strong> Rua Jaime Perdigão, 353</p>
+                    <p><strong>Ponto de táxi:</strong> Próximo ao salão</p>
+                    <p> </p>
+                    <p><strong>Preço aproximado:</strong></p>
+                    <p>• Centro: R$ 35-45</p>
+                    <p>• Barra: R$ 50-65</p>
+                    <p>• Zona Norte: R$ 25-35</p>
                 </div>
             </div>
             
             <div class="map-container">
+                <h3 style="margin-bottom: 1rem;">📍 Localização no Mapa</h3>
                 <iframe 
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.5504!2d-43.279495!3d-22.805279!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997c3849b6b6b7%3A0x7b9c7d5e8f5e5e5e!2sRua%20Jaime%20Perdig%C3%A3o%2C%20353%20-%20Freguesia%20(Ilha%20do%20Governador)%2C%20Rio%20de%20Janeiro%20-%20RJ!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" 
                     width="100%" 
-                    height="400" 
+                    height="450" 
                     style="border:0; border-radius: 15px;" 
                     allowfullscreen="" 
                     loading="lazy">
                 </iframe>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: center;">
+                    <a href="https://www.google.com/maps/dir//Rua+Jaime+Perdigão,+353+-+Freguesia+(Ilha+do+Governador),+Rio+de+Janeiro+-+RJ,+21920-240" 
+                       target="_blank" 
+                       class="btn btn-outline">
+                        <i class="fas fa-map-signs"></i> Traçar Rota
+                    </a>
+                    <a href="https://www.google.com/maps/search/?api=1&query=Rua+Jaime+Perdigão+353+Ilha+do+Governador+RJ" 
+                       target="_blank" 
+                       class="btn btn-outline">
+                        <i class="fas fa-map-marker-alt"></i> Ver no Google Maps
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -189,6 +255,7 @@
             <div class="footer-section">
                 <h4>Beleza & Estilo</h4>
                 <p>Seu salão na Ilha do Governador</p>
+                <p>❤️ Desde 2010</p>
             </div>
             <div class="footer-section">
                 <h4>Endereço</h4>
@@ -198,8 +265,11 @@
             </div>
             <div class="footer-section">
                 <h4>Contato</h4>
-                <p>Tel: (21) 1234-5678</p>
-                <p>WhatsApp: (21) 98765-4321</p>
+                <p>📞 (21) 1234-5678</p>
+                <p>📱 (21) 99264-9522</p>
+                <a href="https://wa.me/5521992649522" target="_blank" style="color: #25D366; text-decoration: none;">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
             </div>
             <div class="footer-section">
                 <h4>Horário</h4>

@@ -1,26 +1,62 @@
-let services = [
-    { id: 1, name: 'Corte de Cabelo', price: 50, duration: 60, image: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?w=500' },
-    { id: 2, name: 'Coloração', price: 120, duration: 120, image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500' },
-    { id: 3, name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500' },
-    { id: 4, name: 'Pedicure', price: 40, duration: 45, image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500' },
-    { id: 5, name: 'Maquiagem', price: 80, duration: 60, image: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=500' },
-    { id: 6, name: 'Escova', price: 45, duration: 60, image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500' }
-];
-
-let professionals = [
-    { id: 1, name: 'Ana Silva', specialty: 'Cabelos', image: 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500' },
-    { id: 2, name: 'Maria Oliveira', specialty: 'Maquiagem', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500' },
-    { id: 3, name: 'João Santos', specialty: 'Barba', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500' },
-    { id: 4, name: 'Carla Souza', specialty: 'Unhas', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500' }
-];
-
+let services = [];
+let professionals = [];
 let appointments = [];
 let ADMIN_PASSWORD = "247126Ca";
 let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
 
-// Número do WhatsApp atualizado
-const WHATSAPP_NUMBER = "5521992649522"; // (21) 99264-9522
+// Número do WhatsApp
+const WHATSAPP_NUMBER = "5521992649522";
 
+// ===== FUNÇÕES DO localStorage =====
+function salvarDados() {
+    localStorage.setItem('servicos', JSON.stringify(services));
+    localStorage.setItem('profissionais', JSON.stringify(professionals));
+    localStorage.setItem('agendamentos', JSON.stringify(appointments));
+    console.log('✅ Dados salvos com sucesso!');
+}
+
+function carregarDados() {
+    // Tenta carregar do localStorage
+    const servicosSalvos = localStorage.getItem('servicos');
+    const profSalvos = localStorage.getItem('profissionais');
+    const aptSalvos = localStorage.getItem('agendamentos');
+    
+    if (servicosSalvos) {
+        services = JSON.parse(servicosSalvos);
+        console.log('✅ Serviços carregados do localStorage');
+    } else {
+        // Se não tiver nada salvo, usa os dados iniciais
+        services = [
+            { id: 1, name: 'Corte de Cabelo', price: 50, duration: 60, image: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?w=500' },
+            { id: 2, name: 'Coloração', price: 120, duration: 120, image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500' },
+            { id: 3, name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500' },
+            { id: 4, name: 'Pedicure', price: 40, duration: 45, image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500' },
+            { id: 5, name: 'Maquiagem', price: 80, duration: 60, image: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=500' },
+            { id: 6, name: 'Escova', price: 45, duration: 60, image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500' }
+        ];
+        salvarDados(); // Salva os dados iniciais
+    }
+    
+    if (profSalvos) {
+        professionals = JSON.parse(profSalvos);
+        console.log('✅ Profissionais carregados do localStorage');
+    } else {
+        professionals = [
+            { id: 1, name: 'Ana Silva', specialty: 'Cabelos', image: 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500' },
+            { id: 2, name: 'Maria Oliveira', specialty: 'Maquiagem', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500' },
+            { id: 3, name: 'João Santos', specialty: 'Barba', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500' },
+            { id: 4, name: 'Carla Souza', specialty: 'Unhas', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500' }
+        ];
+        salvarDados();
+    }
+    
+    if (aptSalvos) {
+        appointments = JSON.parse(aptSalvos);
+        console.log('✅ Agendamentos carregados do localStorage');
+    }
+}
+
+// ===== FUNÇÕES DE RENDERIZAÇÃO =====
 function renderServices() {
     const container = document.getElementById('services-list');
     if (!container) return;
@@ -114,11 +150,12 @@ function renderAdminTables() {
     }
 }
 
+// ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', function() {
+    carregarDados(); // CARREGA OS DADOS SALVOS
     renderServices();
     renderProfessionals();
     
-    // Adicionar evento ao botão Agendar Agora do hero section
     const heroButton = document.querySelector('.hero-buttons .btn:first-child');
     if (heroButton) {
         heroButton.addEventListener('click', function(e) {
@@ -134,6 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// ===== FUNÇÕES DE LOGIN =====
 function checkPassword() {
     const passwordInput = document.getElementById('admin-password');
     const errorElement = document.getElementById('login-error');
@@ -170,6 +208,7 @@ function checkAdminAuth() {
     return true;
 }
 
+// ===== CRUD SERVIÇOS =====
 function openServiceModal(service = null) {
     if (!checkAdminAuth()) return;
     
@@ -222,7 +261,9 @@ function saveService(event, id) {
     
     renderServices();
     renderAdminTables();
+    salvarDados(); // SALVA NO LOCALSTORAGE
     closeModal();
+    alert('✅ Serviço salvo com sucesso!');
 }
 
 function deleteService(id) {
@@ -231,9 +272,12 @@ function deleteService(id) {
         services = services.filter(s => s.id != id);
         renderServices();
         renderAdminTables();
+        salvarDados(); // SALVA NO LOCALSTORAGE
+        alert('✅ Serviço excluído com sucesso!');
     }
 }
 
+// ===== CRUD PROFISSIONAIS =====
 function openProfessionalModal(professional = null) {
     if (!checkAdminAuth()) return;
     
@@ -281,7 +325,9 @@ function saveProfessional(event, id) {
     
     renderProfessionals();
     renderAdminTables();
+    salvarDados(); // SALVA NO LOCALSTORAGE
     closeModal();
+    alert('✅ Profissional salvo com sucesso!');
 }
 
 function deleteProfessional(id) {
@@ -290,9 +336,12 @@ function deleteProfessional(id) {
         professionals = professionals.filter(p => p.id != id);
         renderProfessionals();
         renderAdminTables();
+        salvarDados(); // SALVA NO LOCALSTORAGE
+        alert('✅ Profissional excluído com sucesso!');
     }
 }
 
+// ===== FUNÇÕES DE AGENDAMENTO =====
 function editAppointment(id) {
     if (!checkAdminAuth()) return;
     alert('Funcionalidade em desenvolvimento');
@@ -303,6 +352,8 @@ function deleteAppointment(id) {
     if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
         appointments = appointments.filter(a => a.id != id);
         renderAdminTables();
+        salvarDados(); // SALVA NO LOCALSTORAGE
+        alert('✅ Agendamento cancelado!');
     }
 }
 

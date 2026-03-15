@@ -16,9 +16,33 @@ let professionals = [
 ];
 
 let appointments = [
-    { id: 1, client: 'Cliente 1', service: 'Corte de Cabelo', professional: 'Ana Silva', date: '2024-01-20', time: '14:00', status: 'confirmed' },
-    { id: 2, client: 'Cliente 2', service: 'Manicure', professional: 'Carla Souza', date: '2024-01-20', time: '15:30', status: 'pending' }
+    { 
+        id: 1, 
+        client: 'Cliente 1', 
+        service: 'Corte de Cabelo', 
+        professional: 'Ana Silva', 
+        date: '2024-01-20', 
+        time: '14:00', 
+        status: 'confirmed',
+        address: 'Rua Jaime Perdigão, 353 - Ilha do Governador - CEP: 21920-240'
+    },
+    { 
+        id: 2, 
+        client: 'Cliente 2', 
+        service: 'Manicure', 
+        professional: 'Carla Souza', 
+        date: '2024-01-20', 
+        time: '15:30', 
+        status: 'pending',
+        address: 'Rua Jaime Perdigão, 353 - Ilha do Governador - CEP: 21920-240'
+    }
 ];
+
+// Configuração de senha
+let ADMIN_PASSWORD = "247126Ca";
+
+// Verificar se já está logado
+let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
 
 // Funções de renderização
 function renderServices() {
@@ -119,6 +143,16 @@ function renderAdminTables() {
 
 // Funções de agendamento
 document.addEventListener('DOMContentLoaded', function() {
+    renderServices();
+    renderProfessionals();
+    renderSelects();
+    
+    if (isLoggedIn) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        renderAdminTables();
+    }
+    
     const appointmentForm = document.getElementById('appointment-form');
     if (appointmentForm) {
         appointmentForm.addEventListener('submit', function(e) {
@@ -134,16 +168,75 @@ document.addEventListener('DOMContentLoaded', function() {
                 date: document.getElementById('data').value,
                 time: document.getElementById('hora').value,
                 observations: document.getElementById('observacoes').value,
-                status: 'pending'
+                status: 'pending',
+                address: 'Rua Jaime Perdigão, 353 - Ilha do Governador - CEP: 21920-240'
             };
             
             appointments.push(newAppointment);
             renderAdminTables();
-            alert('Agendamento realizado com sucesso!');
+            
+            alert(`✅ Agendamento realizado com sucesso!\n\nLocal: Rua Jaime Perdigão, 353 - Ilha do Governador\nCEP: 21920-240\nData: ${newAppointment.date}\nHorário: ${newAppointment.time}\n\nTe esperamos lá!`);
+            
             this.reset();
         });
     }
 });
+
+// Funções de login
+function checkPassword() {
+    const passwordInput = document.getElementById('admin-password');
+    const errorElement = document.getElementById('login-error');
+    
+    if (passwordInput.value === ADMIN_PASSWORD) {
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        errorElement.style.display = 'none';
+        passwordInput.value = '';
+        renderAdminTables();
+    } else {
+        errorElement.style.display = 'block';
+        passwordInput.style.border = '2px solid red';
+        setTimeout(() => {
+            passwordInput.style.border = 'none';
+        }, 1000);
+    }
+}
+
+function logout() {
+    sessionStorage.removeItem('adminLoggedIn');
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('admin-password').value = '';
+}
+
+function changePassword() {
+    const currentPass = document.getElementById('current-password').value;
+    const newPass = document.getElementById('new-password').value;
+    const confirmPass = document.getElementById('confirm-password').value;
+    
+    if (currentPass !== ADMIN_PASSWORD) {
+        alert('Senha atual incorreta!');
+        return;
+    }
+    
+    if (newPass.length < 6) {
+        alert('A nova senha deve ter pelo menos 6 caracteres!');
+        return;
+    }
+    
+    if (newPass !== confirmPass) {
+        alert('As senhas não coincidem!');
+        return;
+    }
+    
+    ADMIN_PASSWORD = newPass;
+    alert('Senha alterada com sucesso!');
+    
+    document.getElementById('current-password').value = '';
+    document.getElementById('new-password').value = '';
+    document.getElementById('confirm-password').value = '';
+}
 
 // Funções admin
 function showTab(tabName) {
@@ -159,8 +252,18 @@ function selectService(id) {
     document.getElementById('agendamento').scrollIntoView({ behavior: 'smooth' });
 }
 
+function checkAdminAuth() {
+    if (!sessionStorage.getItem('adminLoggedIn')) {
+        alert('Faça login primeiro!');
+        return false;
+    }
+    return true;
+}
+
 // CRUD Services
 function openServiceModal(service = null) {
+    if (!checkAdminAuth()) return;
+    
     const modal = document.getElementById('modal');
     const modalBody = document.getElementById('modal-body');
     
@@ -215,6 +318,7 @@ function saveService(event, id) {
 }
 
 function deleteService(id) {
+    if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja excluir este serviço?')) {
         services = services.filter(s => s.id != id);
         renderServices();
@@ -225,6 +329,8 @@ function deleteService(id) {
 
 // CRUD Professionals
 function openProfessionalModal(professional = null) {
+    if (!checkAdminAuth()) return;
+    
     const modal = document.getElementById('modal');
     const modalBody = document.getElementById('modal-body');
     
@@ -274,6 +380,7 @@ function saveProfessional(event, id) {
 }
 
 function deleteProfessional(id) {
+    if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja excluir este profissional?')) {
         professionals = professionals.filter(p => p.id != id);
         renderProfessionals();
@@ -284,11 +391,13 @@ function deleteProfessional(id) {
 
 // Appointment functions
 function editAppointment(id) {
+    if (!checkAdminAuth()) return;
     const appointment = appointments.find(a => a.id == id);
     alert('Funcionalidade de edição em desenvolvimento para o agendamento: ' + appointment.client);
 }
 
 function deleteAppointment(id) {
+    if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
         appointments = appointments.filter(a => a.id != id);
         renderAdminTables();
@@ -296,11 +405,13 @@ function deleteAppointment(id) {
 }
 
 function editService(id) {
+    if (!checkAdminAuth()) return;
     const service = services.find(s => s.id == id);
     openServiceModal(service);
 }
 
 function editProfessional(id) {
+    if (!checkAdminAuth()) return;
     const professional = professionals.find(p => p.id == id);
     openProfessionalModal(professional);
 }
@@ -308,14 +419,6 @@ function editProfessional(id) {
 function closeModal() {
     document.getElementById('modal').classList.remove('active');
 }
-
-// Inicialização
-document.addEventListener('DOMContentLoaded', function() {
-    renderServices();
-    renderProfessionals();
-    renderSelects();
-    renderAdminTables();
-});
 
 // Fechar modal ao clicar fora
 window.onclick = function(event) {

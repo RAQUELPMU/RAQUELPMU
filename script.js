@@ -21,7 +21,7 @@ let services = [
         name: 'Design de Sobrancelhas',
         price: 50,
         duration: 30,
-        image: 'https://images.unsplash.com/photo-1621607512214-68297480165e?w=500'
+        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600811/boco4k7hfxuyzcwmfpog.jpg'
     },
     {
         id: 4,

@@ -902,3 +902,113 @@ footer {
         font-size: 1.8rem;
     }
 }
+/* ===== BOTÃO DO TOPO - ESTILO ROSA MODERNO ===== */
+
+/* Botão Agendar Agora do topo */
+.hero-buttons .btn:first-child {
+    background: linear-gradient(135deg, #ff69b4, #ff1493) !important;  /* Gradiente rosa */
+    border: none !important;
+    box-shadow: 0 8px 20px rgba(255,20,147,0.3) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    font-size: 1.1rem !important;
+    padding: 1rem 2.5rem !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Efeito de brilho ao passar o mouse */
+.hero-buttons .btn:first-child:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 30px rgba(255,20,147,0.5) !important;
+    background: linear-gradient(135deg, #ff1493, #ff69b4) !important;
+}
+
+/* Efeito de pulsação suave */
+.hero-buttons .btn:first-child {
+    animation: pulse 2s infinite !important;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255,105,180,0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(255,105,180,0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255,105,180,0);
+    }
+}
+
+/* Estilo para o ícone do WhatsApp dentro do botão */
+.hero-buttons .btn:first-child i {
+    font-size: 1.3rem !important;
+    margin-right: 8px !important;
+    transition: transform 0.3s ease !important;
+}
+
+.hero-buttons .btn:first-child:hover i {
+    transform: scale(1.2) rotate(5deg) !important;
+}
+
+/* Borda brilhante no botão */
+.hero-buttons .btn:first-child::before {
+    content: '' !important;
+    position: absolute !important;
+    top: -2px !important;
+    left: -2px !important;
+    right: -2px !important;
+    bottom: -2px !important;
+    background: linear-gradient(45deg, #ff69b4, #ff1493, #ff69b4, #ff1493) !important;
+    border-radius: 50px !important;
+    z-index: -1 !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+}
+
+.hero-buttons .btn:first-child:hover::before {
+    opacity: 1 !important;
+    animation: rotate 2s linear infinite !important;
+}
+
+@keyframes rotate {
+    0% {
+        filter: blur(5px) !important;
+    }
+    50% {
+        filter: blur(10px) !important;
+    }
+    100% {
+        filter: blur(5px) !important;
+    }
+}
+
+/* Versão alternativa - ROSA SÓLIDO (sem gradiente) */
+.hero-buttons .btn:first-child.solid-rosa {
+    background: #ff69b4 !important;  /* Rosa sólido */
+    box-shadow: 0 8px 20px rgba(255,105,180,0.4) !important;
+}
+
+.hero-buttons .btn:first-child.solid-rosa:hover {
+    background: #ff1493 !important;
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 30px rgba(255,20,147,0.5) !important;
+}
+
+/* Versão com bordas arredondadas diferentes */
+.hero-buttons .btn:first-child.borda-diferente {
+    border-radius: 15px !important;  /* Menos arredondado */
+}
+
+.hero-buttons .btn:first-child.borda-extrema {
+    border-radius: 10px !important;  /* Quase quadrado */
+}
+
+/* Efeito de clique */
+.hero-buttons .btn:first-child:active {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(255,20,147,0.4) !important;
+}

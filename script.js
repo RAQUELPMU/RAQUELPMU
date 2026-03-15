@@ -1,7 +1,5 @@
-// ===== CONFIGURAÇÃO =====
-const GITHUB_USER = "RAQUELPMU"; // Coloque seu nome de usuário do GitHub
-const REPO_NAME = "RAQUELPMU"; // O nome que você deu ao repositório
-const API_URL = `https://my-json-server.typicode.com/${GITHUB_USER}/${REPO_NAME}`;
+// ===== CONFIGURAÇÃO DO FIREBASE =====
+// (O Firebase já está configurado no index.html, então não precisa repetir)
 
 let services = [];
 let professionals = [];
@@ -10,64 +8,84 @@ let ADMIN_PASSWORD = "247126Ca";
 let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
 const WHATSAPP_NUMBER = "5521992649522";
 
-// ===== CARREGAR DADOS DA API =====
+// ===== CARREGAR DADOS DO FIREBASE =====
 async function carregarDados() {
     try {
-        console.log('🔄 Carregando dados da API...');
+        console.log('🔄 Carregando dados do Firebase...');
         
-        // Carrega serviços
-        const servicesRes = await fetch(`${API_URL}/services`);
-        services = await servicesRes.json();
-        console.log('✅ Serviços carregados:', services.length);
+        // Carregar serviços
+        const servicesSnapshot = await db.collection('services').get();
+        services = servicesSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
         
-        // Carrega profissionais
-        const profRes = await fetch(`${API_URL}/professionals`);
-        professionals = await profRes.json();
-        console.log('✅ Profissionais carregados:', professionals.length);
+        // Carregar profissionais
+        const professionalsSnapshot = await db.collection('professionals').get();
+        professionals = professionalsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
         
-        // Carrega agendamentos
-        const aptRes = await fetch(`${API_URL}/appointments`);
-        appointments = await aptRes.json();
-        console.log('✅ Agendamentos carregados:', appointments.length);
+        // Carregar agendamentos
+        const appointmentsSnapshot = await db.collection('appointments').get();
+        appointments = appointmentsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
         
-        // Atualiza a tela
+        console.log('✅ Dados carregados!');
+        
+        // Atualizar tela
         renderServices();
         renderProfessionals();
         if (isLoggedIn) renderAdminTables();
         
     } catch (erro) {
-        console.error('❌ Erro ao carregar dados:', erro);
-        alert('Erro ao conectar com o servidor. Verifique sua internet.');
+        console.error('❌ Erro ao carregar:', erro);
     }
 }
 
-// ===== SALVAR DADOS NA API =====
-async function salvarDados(tipo, metodo, dados, id = null) {
+// ===== DADOS INICIAIS (CASO NÃO EXISTA NADA) =====
+async function criarDadosIniciais() {
     try {
-        let url = `${API_URL}/${tipo}`;
-        let options = {
-            method: metodo,
-            headers: { 'Content-Type': 'application/json' }
-        };
+        // Verificar se já tem serviços
+        const servicesCheck = await db.collection('services').get();
+        if (!servicesCheck.empty) return;
         
-        if (dados) {
-            options.body = JSON.stringify(dados);
+        console.log('📝 Criando dados iniciais...');
+        
+        // Serviços iniciais
+        const servicosIniciais = [
+            { name: 'Corte de Cabelo', price: 50, duration: 60, image: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?w=500' },
+            { name: 'Coloração', price: 120, duration: 120, image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500' },
+            { name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500' },
+            { name: 'Pedicure', price: 40, duration: 45, image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500' },
+            { name: 'Maquiagem', price: 80, duration: 60, image: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=500' },
+            { name: 'Escova', price: 45, duration: 60, image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500' }
+        ];
+        
+        for (const servico of servicosIniciais) {
+            await db.collection('services').add(servico);
         }
         
-        if (id) {
-            url = `${API_URL}/${tipo}/${id}`;
+        // Profissionais iniciais
+        const profissionaisIniciais = [
+            { name: 'Ana Silva', specialty: 'Cabelos', image: 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500' },
+            { name: 'Maria Oliveira', specialty: 'Maquiagem', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500' },
+            { name: 'João Santos', specialty: 'Barba', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500' },
+            { name: 'Carla Souza', specialty: 'Unhas', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500' }
+        ];
+        
+        for (const prof of profissionaisIniciais) {
+            await db.collection('professionals').add(prof);
         }
         
-        const response = await fetch(url, options);
-        const resultado = await response.json();
-        console.log(`✅ Dados salvos em ${tipo}:`, resultado);
-        
-        // Recarrega tudo para garantir consistência
-        await carregarDados();
+        console.log('✅ Dados iniciais criados!');
+        carregarDados(); // Recarregar
         
     } catch (erro) {
-        console.error('❌ Erro ao salvar:', erro);
-        alert('Erro ao salvar. Tente novamente.');
+        console.error('❌ Erro ao criar dados iniciais:', erro);
     }
 }
 
@@ -128,8 +146,8 @@ function renderAdminTables() {
                 <td>${apt.date} ${apt.time}</td>
                 <td><span class="status-badge status-${apt.status}">${apt.status === 'confirmed' ? 'Confirmado' : 'Pendente'}</span></td>
                 <td>
-                    <button class="edit-btn" onclick="editAppointment(${apt.id})">Editar</button>
-                    <button class="delete-btn" onclick="deleteAppointment(${apt.id})">Excluir</button>
+                    <button class="edit-btn" onclick="editAppointment('${apt.id}')">Editar</button>
+                    <button class="delete-btn" onclick="deleteAppointment('${apt.id}')">Excluir</button>
                 </td>
             </tr>
         `).join('');
@@ -143,8 +161,8 @@ function renderAdminTables() {
                 <td>R$ ${service.price}</td>
                 <td>${service.duration} min</td>
                 <td>
-                    <button class="edit-btn" onclick="editService(${service.id})">Editar</button>
-                    <button class="delete-btn" onclick="deleteService(${service.id})">Excluir</button>
+                    <button class="edit-btn" onclick="editService('${service.id}')">Editar</button>
+                    <button class="delete-btn" onclick="deleteService('${service.id}')">Excluir</button>
                 </td>
             </tr>
         `).join('');
@@ -157,8 +175,8 @@ function renderAdminTables() {
                 <td>${prof.name}</td>
                 <td>${prof.specialty}</td>
                 <td>
-                    <button class="edit-btn" onclick="editProfessional(${prof.id})">Editar</button>
-                    <button class="delete-btn" onclick="deleteProfessional(${prof.id})">Excluir</button>
+                    <button class="edit-btn" onclick="editProfessional('${prof.id}')">Editar</button>
+                    <button class="delete-btn" onclick="deleteProfessional('${prof.id}')">Excluir</button>
                 </td>
             </tr>
         `).join('');
@@ -166,8 +184,9 @@ function renderAdminTables() {
 }
 
 // ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', function() {
-    carregarDados(); // CARREGA DA API ONLINE
+document.addEventListener('DOMContentLoaded', async function() {
+    await criarDadosIniciais(); // Cria dados se não existirem
+    await carregarDados(); // Carrega do Firebase
     
     const heroButton = document.querySelector('.hero-buttons .btn:first-child');
     if (heroButton) {
@@ -228,7 +247,7 @@ function openServiceModal(service = null) {
     const modalBody = document.getElementById('modal-body');
     
     modalBody.innerHTML = `
-        <form onsubmit="saveService(event, ${service ? service.id : 'null'})">
+        <form onsubmit="saveService(event, ${service ? `'${service.id}'` : 'null'})">
             <div class="form-group">
                 <label>Nome do serviço</label>
                 <input type="text" id="service-name" value="${service ? service.name : ''}" required>
@@ -263,24 +282,37 @@ async function saveService(event, id) {
         image: document.getElementById('service-image').value || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500'
     };
     
-    if (id) {
-        // EDITAR
-        await salvarDados('services', 'PUT', serviceData, id);
-    } else {
-        // NOVO
-        serviceData.id = services.length + 1;
-        await salvarDados('services', 'POST', serviceData);
+    try {
+        if (id) {
+            // EDITAR
+            await db.collection('services').doc(id).update(serviceData);
+            alert('✅ Serviço atualizado com sucesso!');
+        } else {
+            // NOVO
+            await db.collection('services').add(serviceData);
+            alert('✅ Serviço criado com sucesso!');
+        }
+        
+        await carregarDados(); // Recarrega tudo
+        closeModal();
+        
+    } catch (erro) {
+        console.error('❌ Erro ao salvar:', erro);
+        alert('Erro ao salvar. Tente novamente.');
     }
-    
-    closeModal();
-    alert('✅ Serviço salvo com sucesso!');
 }
 
 async function deleteService(id) {
     if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja excluir este serviço?')) {
-        await salvarDados('services', 'DELETE', null, id);
-        alert('✅ Serviço excluído com sucesso!');
+        try {
+            await db.collection('services').doc(id).delete();
+            alert('✅ Serviço excluído com sucesso!');
+            await carregarDados();
+        } catch (erro) {
+            console.error('❌ Erro ao excluir:', erro);
+            alert('Erro ao excluir. Tente novamente.');
+        }
     }
 }
 
@@ -292,7 +324,7 @@ function openProfessionalModal(professional = null) {
     const modalBody = document.getElementById('modal-body');
     
     modalBody.innerHTML = `
-        <form onsubmit="saveProfessional(event, ${professional ? professional.id : 'null'})">
+        <form onsubmit="saveProfessional(event, ${professional ? `'${professional.id}'` : 'null'})">
             <div class="form-group">
                 <label>Nome do profissional</label>
                 <input type="text" id="professional-name" value="${professional ? professional.name : ''}" required>
@@ -322,22 +354,35 @@ async function saveProfessional(event, id) {
         image: document.getElementById('professional-image').value || 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500'
     };
     
-    if (id) {
-        await salvarDados('professionals', 'PUT', professionalData, id);
-    } else {
-        professionalData.id = professionals.length + 1;
-        await salvarDados('professionals', 'POST', professionalData);
+    try {
+        if (id) {
+            await db.collection('professionals').doc(id).update(professionalData);
+            alert('✅ Profissional atualizado com sucesso!');
+        } else {
+            await db.collection('professionals').add(professionalData);
+            alert('✅ Profissional criado com sucesso!');
+        }
+        
+        await carregarDados();
+        closeModal();
+        
+    } catch (erro) {
+        console.error('❌ Erro ao salvar:', erro);
+        alert('Erro ao salvar. Tente novamente.');
     }
-    
-    closeModal();
-    alert('✅ Profissional salvo com sucesso!');
 }
 
 async function deleteProfessional(id) {
     if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja excluir este profissional?')) {
-        await salvarDados('professionals', 'DELETE', null, id);
-        alert('✅ Profissional excluído com sucesso!');
+        try {
+            await db.collection('professionals').doc(id).delete();
+            alert('✅ Profissional excluído com sucesso!');
+            await carregarDados();
+        } catch (erro) {
+            console.error('❌ Erro ao excluir:', erro);
+            alert('Erro ao excluir. Tente novamente.');
+        }
     }
 }
 
@@ -350,20 +395,26 @@ function editAppointment(id) {
 async function deleteAppointment(id) {
     if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
-        await salvarDados('appointments', 'DELETE', null, id);
-        alert('✅ Agendamento cancelado!');
+        try {
+            await db.collection('appointments').doc(id).delete();
+            alert('✅ Agendamento cancelado!');
+            await carregarDados();
+        } catch (erro) {
+            console.error('❌ Erro ao excluir:', erro);
+            alert('Erro ao excluir. Tente novamente.');
+        }
     }
 }
 
 function editService(id) {
     if (!checkAdminAuth()) return;
-    const service = services.find(s => s.id == id);
+    const service = services.find(s => s.id === id);
     openServiceModal(service);
 }
 
 function editProfessional(id) {
     if (!checkAdminAuth()) return;
-    const professional = professionals.find(p => p.id == id);
+    const professional = professionals.find(p => p.id === id);
     openProfessionalModal(professional);
 }
 

@@ -1,6 +1,4 @@
-// ===== CONFIGURAÇÃO DO FIREBASE =====
-// (O Firebase já está configurado no index.html, então não precisa repetir)
-
+// ===== FIREBASE JÁ ESTÁ CONFIGURADO NO INDEX.HTML =====
 let services = [];
 let professionals = [];
 let appointments = [];
@@ -43,49 +41,6 @@ async function carregarDados() {
         
     } catch (erro) {
         console.error('❌ Erro ao carregar:', erro);
-    }
-}
-
-// ===== DADOS INICIAIS (CASO NÃO EXISTA NADA) =====
-async function criarDadosIniciais() {
-    try {
-        // Verificar se já tem serviços
-        const servicesCheck = await db.collection('services').get();
-        if (!servicesCheck.empty) return;
-        
-        console.log('📝 Criando dados iniciais...');
-        
-        // Serviços iniciais
-        const servicosIniciais = [
-            { name: 'Corte de Cabelo', price: 50, duration: 60, image: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?w=500' },
-            { name: 'Coloração', price: 120, duration: 120, image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500' },
-            { name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500' },
-            { name: 'Pedicure', price: 40, duration: 45, image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500' },
-            { name: 'Maquiagem', price: 80, duration: 60, image: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=500' },
-            { name: 'Escova', price: 45, duration: 60, image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500' }
-        ];
-        
-        for (const servico of servicosIniciais) {
-            await db.collection('services').add(servico);
-        }
-        
-        // Profissionais iniciais
-        const profissionaisIniciais = [
-            { name: 'Ana Silva', specialty: 'Cabelos', image: 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500' },
-            { name: 'Maria Oliveira', specialty: 'Maquiagem', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500' },
-            { name: 'João Santos', specialty: 'Barba', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500' },
-            { name: 'Carla Souza', specialty: 'Unhas', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500' }
-        ];
-        
-        for (const prof of profissionaisIniciais) {
-            await db.collection('professionals').add(prof);
-        }
-        
-        console.log('✅ Dados iniciais criados!');
-        carregarDados(); // Recarregar
-        
-    } catch (erro) {
-        console.error('❌ Erro ao criar dados iniciais:', erro);
     }
 }
 
@@ -184,9 +139,8 @@ function renderAdminTables() {
 }
 
 // ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', async function() {
-    await criarDadosIniciais(); // Cria dados se não existirem
-    await carregarDados(); // Carrega do Firebase
+document.addEventListener('DOMContentLoaded', function() {
+    carregarDados();
     
     const heroButton = document.querySelector('.hero-buttons .btn:first-child');
     if (heroButton) {
@@ -239,6 +193,78 @@ function checkAdminAuth() {
     return true;
 }
 
+// ===== CRUD PROFISSIONAIS (CORRIGIDO PARA FIREBASE) =====
+function openProfessionalModal(professional = null) {
+    if (!checkAdminAuth()) return;
+    
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modal-body');
+    
+    modalBody.innerHTML = `
+        <form onsubmit="saveProfessional(event, ${professional ? `'${professional.id}'` : 'null'})">
+            <div class="form-group">
+                <label>Nome do profissional</label>
+                <input type="text" id="professional-name" value="${professional ? professional.name : ''}" required>
+            </div>
+            <div class="form-group">
+                <label>Especialidade</label>
+                <input type="text" id="professional-specialty" value="${professional ? professional.specialty : ''}" required>
+            </div>
+            <div class="form-group">
+                <label>URL da imagem</label>
+                <input type="url" id="professional-image" value="${professional ? professional.image : ''}">
+            </div>
+            <button type="submit" class="btn">Salvar</button>
+        </form>
+    `;
+    
+    document.getElementById('modal-title').textContent = professional ? 'Editar Profissional' : 'Novo Profissional';
+    modal.classList.add('active');
+}
+
+async function saveProfessional(event, id) {
+    event.preventDefault();
+    
+    const professionalData = {
+        name: document.getElementById('professional-name').value,
+        specialty: document.getElementById('professional-specialty').value,
+        image: document.getElementById('professional-image').value || 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500'
+    };
+    
+    try {
+        if (id) {
+            // EDITAR
+            await db.collection('professionals').doc(id).update(professionalData);
+            alert('✅ Profissional atualizado com sucesso!');
+        } else {
+            // NOVO
+            await db.collection('professionals').add(professionalData);
+            alert('✅ Profissional criado com sucesso!');
+        }
+        
+        await carregarDados(); // Recarrega tudo
+        closeModal();
+        
+    } catch (erro) {
+        console.error('❌ Erro ao salvar:', erro);
+        alert('Erro ao salvar. Tente novamente.');
+    }
+}
+
+async function deleteProfessional(id) {
+    if (!checkAdminAuth()) return;
+    if (confirm('Tem certeza que deseja excluir este profissional?')) {
+        try {
+            await db.collection('professionals').doc(id).delete();
+            alert('✅ Profissional excluído com sucesso!');
+            await carregarDados();
+        } catch (erro) {
+            console.error('❌ Erro ao excluir:', erro);
+            alert('Erro ao excluir. Tente novamente.');
+        }
+    }
+}
+
 // ===== CRUD SERVIÇOS =====
 function openServiceModal(service = null) {
     if (!checkAdminAuth()) return;
@@ -284,16 +310,14 @@ async function saveService(event, id) {
     
     try {
         if (id) {
-            // EDITAR
             await db.collection('services').doc(id).update(serviceData);
             alert('✅ Serviço atualizado com sucesso!');
         } else {
-            // NOVO
             await db.collection('services').add(serviceData);
             alert('✅ Serviço criado com sucesso!');
         }
         
-        await carregarDados(); // Recarrega tudo
+        await carregarDados();
         closeModal();
         
     } catch (erro) {
@@ -308,76 +332,6 @@ async function deleteService(id) {
         try {
             await db.collection('services').doc(id).delete();
             alert('✅ Serviço excluído com sucesso!');
-            await carregarDados();
-        } catch (erro) {
-            console.error('❌ Erro ao excluir:', erro);
-            alert('Erro ao excluir. Tente novamente.');
-        }
-    }
-}
-
-// ===== CRUD PROFISSIONAIS =====
-function openProfessionalModal(professional = null) {
-    if (!checkAdminAuth()) return;
-    
-    const modal = document.getElementById('modal');
-    const modalBody = document.getElementById('modal-body');
-    
-    modalBody.innerHTML = `
-        <form onsubmit="saveProfessional(event, ${professional ? `'${professional.id}'` : 'null'})">
-            <div class="form-group">
-                <label>Nome do profissional</label>
-                <input type="text" id="professional-name" value="${professional ? professional.name : ''}" required>
-            </div>
-            <div class="form-group">
-                <label>Especialidade</label>
-                <input type="text" id="professional-specialty" value="${professional ? professional.specialty : ''}" required>
-            </div>
-            <div class="form-group">
-                <label>URL da imagem</label>
-                <input type="url" id="professional-image" value="${professional ? professional.image : ''}">
-            </div>
-            <button type="submit" class="btn">Salvar</button>
-        </form>
-    `;
-    
-    document.getElementById('modal-title').textContent = professional ? 'Editar Profissional' : 'Novo Profissional';
-    modal.classList.add('active');
-}
-
-async function saveProfessional(event, id) {
-    event.preventDefault();
-    
-    const professionalData = {
-        name: document.getElementById('professional-name').value,
-        specialty: document.getElementById('professional-specialty').value,
-        image: document.getElementById('professional-image').value || 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500'
-    };
-    
-    try {
-        if (id) {
-            await db.collection('professionals').doc(id).update(professionalData);
-            alert('✅ Profissional atualizado com sucesso!');
-        } else {
-            await db.collection('professionals').add(professionalData);
-            alert('✅ Profissional criado com sucesso!');
-        }
-        
-        await carregarDados();
-        closeModal();
-        
-    } catch (erro) {
-        console.error('❌ Erro ao salvar:', erro);
-        alert('Erro ao salvar. Tente novamente.');
-    }
-}
-
-async function deleteProfessional(id) {
-    if (!checkAdminAuth()) return;
-    if (confirm('Tem certeza que deseja excluir este profissional?')) {
-        try {
-            await db.collection('professionals').doc(id).delete();
-            alert('✅ Profissional excluído com sucesso!');
             await carregarDados();
         } catch (erro) {
             console.error('❌ Erro ao excluir:', erro);

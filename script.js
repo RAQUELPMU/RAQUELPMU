@@ -1,21 +1,20 @@
-// ===== CONFIGURAÇÃO =====
+// ===== SÓ FIREBASE - NADA DE JSON =====
 let services = [];
 let professionals = [];
-let appointments = [];
 let ADMIN_PASSWORD = "247126Ca";
 let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
 const WHATSAPP_NUMBER = "5521992649522";
 
-// ===== CARREGAR DADOS DO FIREBASE =====
+// ===== CARREGAR DADOS =====
 async function carregarDados() {
     try {
-        console.log('Carregando dados...');
+        console.log('Carregando...');
         
-        const servicesSnapshot = await db.collection('services').get();
-        services = servicesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const snap = await db.collection('professionals').get();
+        professionals = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
-        const professionalsSnapshot = await db.collection('professionals').get();
-        professionals = professionalsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const snap2 = await db.collection('services').get();
+        services = snap2.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
         renderServices();
         renderProfessionals();
@@ -23,28 +22,26 @@ async function carregarDados() {
         
     } catch (erro) {
         console.error('Erro:', erro);
+        alert('Erro: ' + erro.message);
     }
 }
 
 // ===== RENDERIZAR =====
 function renderServices() {
-    const container = document.getElementById('services-list');
-    if (!container) return;
+    const el = document.getElementById('services-list');
+    if (!el) return;
     
-    container.innerHTML = services.map(service => {
-        const msg = `Olá! Quero agendar ${service.name}`;
+    el.innerHTML = services.map(s => {
+        const msg = `Olá! Quero agendar ${s.name}`;
         const link = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-        
         return `
             <div class="service-card">
-                <div class="service-img" style="background-image: url('${service.image}')"></div>
+                <div class="service-img" style="background-image: url('${s.image}')"></div>
                 <div class="service-content">
-                    <h3>${service.name}</h3>
-                    <p class="service-price">R$ ${service.price}</p>
-                    <p>${service.duration} min</p>
-                    <a href="${link}" target="_blank" class="btn whatsapp-btn">
-                        <i class="fab fa-whatsapp"></i> Agendar
-                    </a>
+                    <h3>${s.name}</h3>
+                    <p class="service-price">R$ ${s.price}</p>
+                    <p>${s.duration} min</p>
+                    <a href="${link}" target="_blank" class="btn whatsapp-btn">Agendar</a>
                 </div>
             </div>
         `;
@@ -52,45 +49,43 @@ function renderServices() {
 }
 
 function renderProfessionals() {
-    const container = document.getElementById('professionals-list');
-    if (!container) return;
+    const el = document.getElementById('professionals-list');
+    if (!el) return;
     
-    container.innerHTML = professionals.map(prof => `
+    el.innerHTML = professionals.map(p => `
         <div class="professional-card">
-            <div class="professional-img" style="background-image: url('${prof.image}')"></div>
-            <h3>${prof.name}</h3>
-            <p>${prof.specialty}</p>
+            <div class="professional-img" style="background-image: url('${p.image}')"></div>
+            <h3>${p.name}</h3>
+            <p>${p.specialty}</p>
         </div>
     `).join('');
 }
 
 function renderAdminTables() {
-    // Profissionais admin
-    const professionalsAdminList = document.getElementById('professionals-admin-list');
-    if (professionalsAdminList) {
-        professionalsAdminList.innerHTML = professionals.map(prof => `
+    const el1 = document.getElementById('professionals-admin-list');
+    if (el1) {
+        el1.innerHTML = professionals.map(p => `
             <tr>
-                <td>${prof.name}</td>
-                <td>${prof.specialty}</td>
+                <td>${p.name}</td>
+                <td>${p.specialty}</td>
                 <td>
-                    <button class="edit-btn" onclick="editProfessional('${prof.id}')">Editar</button>
-                    <button class="delete-btn" onclick="deleteProfessional('${prof.id}')">Excluir</button>
+                    <button onclick="editProfessional('${p.id}')">Editar</button>
+                    <button onclick="deleteProfessional('${p.id}')">Excluir</button>
                 </td>
             </tr>
         `).join('');
     }
     
-    // Serviços admin
-    const servicesAdminList = document.getElementById('services-admin-list');
-    if (servicesAdminList) {
-        servicesAdminList.innerHTML = services.map(service => `
+    const el2 = document.getElementById('services-admin-list');
+    if (el2) {
+        el2.innerHTML = services.map(s => `
             <tr>
-                <td>${service.name}</td>
-                <td>R$ ${service.price}</td>
-                <td>${service.duration} min</td>
+                <td>${s.name}</td>
+                <td>R$ ${s.price}</td>
+                <td>${s.duration} min</td>
                 <td>
-                    <button class="edit-btn" onclick="editService('${service.id}')">Editar</button>
-                    <button class="delete-btn" onclick="deleteService('${service.id}')">Excluir</button>
+                    <button onclick="editService('${s.id}')">Editar</button>
+                    <button onclick="deleteService('${s.id}')">Excluir</button>
                 </td>
             </tr>
         `).join('');
@@ -104,9 +99,7 @@ function checkPassword() {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
         renderAdminTables();
-    } else {
-        alert('Senha incorreta!');
-    }
+    } else alert('Senha errada');
 }
 
 function logout() {
@@ -116,57 +109,40 @@ function logout() {
 }
 
 function showTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(tabName).style.display = 'block';
     event.target.classList.add('active');
 }
 
-// ===== CRUD PROFISSIONAIS (VERSÃO SIMPLES) =====
-function openProfessionalModal(professional = null) {
-    const modal = document.getElementById('modal');
+// ===== PROFISSIONAIS =====
+function openProfessionalModal(p = null) {
     document.getElementById('modal-body').innerHTML = `
-        <form onsubmit="saveProfessional(event, ${professional ? `'${professional.id}'` : 'null'})">
-            <div class="form-group">
-                <label>Nome</label>
-                <input type="text" id="prof-name" value="${professional ? professional.name : ''}" required>
-            </div>
-            <div class="form-group">
-                <label>Especialidade</label>
-                <input type="text" id="prof-specialty" value="${professional ? professional.specialty : ''}" required>
-            </div>
-            <div class="form-group">
-                <label>Imagem URL</label>
-                <input type="url" id="prof-image" value="${professional ? professional.image : 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500'}">
-            </div>
-            <button type="submit" class="btn">Salvar</button>
+        <form onsubmit="saveProfessional(event, ${p ? `'${p.id}'` : 'null'})">
+            <input type="text" id="prof-name" value="${p ? p.name : ''}" placeholder="Nome" required>
+            <input type="text" id="prof-spec" value="${p ? p.specialty : ''}" placeholder="Especialidade" required>
+            <input type="url" id="prof-img" value="${p ? p.image : 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500'}" placeholder="URL da imagem">
+            <button type="submit">Salvar</button>
         </form>
     `;
-    document.getElementById('modal-title').textContent = professional ? 'Editar' : 'Novo Profissional';
-    modal.classList.add('active');
+    document.getElementById('modal-title').textContent = p ? 'Editar' : 'Novo Profissional';
+    document.getElementById('modal').classList.add('active');
 }
 
 async function saveProfessional(event, id) {
     event.preventDefault();
-    
     const data = {
         name: document.getElementById('prof-name').value,
-        specialty: document.getElementById('prof-specialty').value,
-        image: document.getElementById('prof-image').value
+        specialty: document.getElementById('prof-spec').value,
+        image: document.getElementById('prof-img').value
     };
-    
     try {
-        if (id && id !== 'null') {
-            await db.collection('professionals').doc(id).update(data);
-        } else {
-            await db.collection('professionals').add(data);
-        }
-        alert('✅ Salvo!');
+        if (id && id !== 'null') await db.collection('professionals').doc(id).update(data);
+        else await db.collection('professionals').add(data);
+        alert('Salvo!');
         closeModal();
         carregarDados();
-    } catch (erro) {
-        alert('Erro: ' + erro.message);
-    }
+    } catch (e) { alert('Erro: ' + e.message); }
 }
 
 async function deleteProfessional(id) {
@@ -176,56 +152,36 @@ async function deleteProfessional(id) {
     }
 }
 
-// ===== CRUD SERVIÇOS (VERSÃO SIMPLES) =====
-function openServiceModal(service = null) {
-    const modal = document.getElementById('modal');
+// ===== SERVIÇOS =====
+function openServiceModal(s = null) {
     document.getElementById('modal-body').innerHTML = `
-        <form onsubmit="saveService(event, ${service ? `'${service.id}'` : 'null'})">
-            <div class="form-group">
-                <label>Nome</label>
-                <input type="text" id="service-name" value="${service ? service.name : ''}" required>
-            </div>
-            <div class="form-group">
-                <label>Preço</label>
-                <input type="number" id="service-price" value="${service ? service.price : ''}" required>
-            </div>
-            <div class="form-group">
-                <label>Duração (min)</label>
-                <input type="number" id="service-duration" value="${service ? service.duration : ''}" required>
-            </div>
-            <div class="form-group">
-                <label>Imagem URL</label>
-                <input type="url" id="service-image" value="${service ? service.image : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500'}">
-            </div>
-            <button type="submit" class="btn">Salvar</button>
+        <form onsubmit="saveService(event, ${s ? `'${s.id}'` : 'null'})">
+            <input type="text" id="serv-name" value="${s ? s.name : ''}" placeholder="Nome" required>
+            <input type="number" id="serv-price" value="${s ? s.price : ''}" placeholder="Preço" required>
+            <input type="number" id="serv-dur" value="${s ? s.duration : ''}" placeholder="Duração (min)" required>
+            <input type="url" id="serv-img" value="${s ? s.image : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500'}" placeholder="URL da imagem">
+            <button type="submit">Salvar</button>
         </form>
     `;
-    document.getElementById('modal-title').textContent = service ? 'Editar' : 'Novo Serviço';
-    modal.classList.add('active');
+    document.getElementById('modal-title').textContent = s ? 'Editar' : 'Novo Serviço';
+    document.getElementById('modal').classList.add('active');
 }
 
 async function saveService(event, id) {
     event.preventDefault();
-    
     const data = {
-        name: document.getElementById('service-name').value,
-        price: Number(document.getElementById('service-price').value),
-        duration: Number(document.getElementById('service-duration').value),
-        image: document.getElementById('service-image').value
+        name: document.getElementById('serv-name').value,
+        price: Number(document.getElementById('serv-price').value),
+        duration: Number(document.getElementById('serv-dur').value),
+        image: document.getElementById('serv-img').value
     };
-    
     try {
-        if (id && id !== 'null') {
-            await db.collection('services').doc(id).update(data);
-        } else {
-            await db.collection('services').add(data);
-        }
-        alert('✅ Salvo!');
+        if (id && id !== 'null') await db.collection('services').doc(id).update(data);
+        else await db.collection('services').add(data);
+        alert('Salvo!');
         closeModal();
         carregarDados();
-    } catch (erro) {
-        alert('Erro: ' + erro.message);
-    }
+    } catch (e) { alert('Erro: ' + e.message); }
 }
 
 async function deleteService(id) {
@@ -236,13 +192,11 @@ async function deleteService(id) {
 }
 
 function editProfessional(id) {
-    const prof = professionals.find(p => p.id === id);
-    openProfessionalModal(prof);
+    openProfessionalModal(professionals.find(p => p.id === id));
 }
 
 function editService(id) {
-    const serv = services.find(s => s.id === id);
-    openServiceModal(serv);
+    openServiceModal(services.find(s => s.id === id));
 }
 
 function closeModal() {
@@ -250,25 +204,19 @@ function closeModal() {
 }
 
 function agendarWhatsApp() {
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Quero agendar um horário.`, '_blank');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Quero agendar.`, '_blank');
 }
 
-// ===== INICIAR =====
 document.addEventListener('DOMContentLoaded', () => {
     carregarDados();
-    
-    document.querySelector('.hero-buttons .btn:first-child')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        agendarWhatsApp();
-    });
-    
+    const btn = document.querySelector('.hero-buttons .btn:first-child');
+    if (btn) btn.onclick = (e) => { e.preventDefault(); agendarWhatsApp(); };
     if (isLoggedIn) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
     }
 });
 
-window.onclick = (event) => {
-    const modal = document.getElementById('modal');
-    if (event.target === modal) closeModal();
+window.onclick = (e) => {
+    if (e.target === document.getElementById('modal')) closeModal();
 };

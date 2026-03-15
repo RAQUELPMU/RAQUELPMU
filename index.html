@@ -3,17 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beleza & Estilo | Salão de Beleza</title>
+    <title>Beleza & Estilo | Salão de Beleza - Ilha do Governador</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Barra de endereço superior -->
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <div class="contact-info">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Rua Jaime Perdigão, 353 - Ilha do Governador, Rio de Janeiro - RJ - CEP: 21920-240</span>
+            </div>
+            <div class="contact-info">
+                <i class="fas fa-phone"></i>
+                <span>(21) 1234-5678</span>
+            </div>
+            <div class="contact-info">
+                <i class="fas fa-clock"></i>
+                <span>Seg-Sáb: 9h às 20h | Dom: Fechado</span>
+            </div>
+        </div>
+    </div>
+
     <header>
         <nav>
-            <div class="logo">Beleza & Estilo</div>
+            <div class="logo">
+                Beleza & Estilo
+                <span class="logo-location">Ilha do Governador</span>
+            </div>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#servicos">Serviços</a></li>
                 <li><a href="#profissionais">Profissionais</a></li>
+                <li><a href="#localizacao">Localização</a></li>
                 <li><a href="#agendamento">Agendar</a></li>
                 <li><a href="#admin">Admin</a></li>
             </ul>
@@ -22,22 +45,84 @@
 
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1>Realce sua beleza com nossos profissionais</h1>
+            <h1>Beleza & Estilo na Ilha do Governador</h1>
+            <p class="hero-address">
+                <i class="fas fa-map-pin"></i> Rua Jaime Perdigão, 353 - Ilha do Governador - CEP: 21920-240
+            </p>
             <p>Agende já seu horário e descubra o poder da transformação</p>
-            <a href="#agendamento" class="btn">Agendar Agora</a>
+            <div class="hero-buttons">
+                <a href="#agendamento" class="btn">Agendar Agora</a>
+                <a href="#localizacao" class="btn btn-outline">Como Chegar</a>
+            </div>
         </div>
     </section>
 
+    <!-- Seção de Serviços -->
     <section id="servicos">
-        <h2 class="section-title">Nossos Serviços</h2>
+        <h2 class="section-title">Nossos Serviços na Ilha</h2>
         <div class="services-grid" id="services-list"></div>
     </section>
 
+    <!-- Seção de Profissionais -->
     <section id="profissionais">
         <h2 class="section-title">Nossos Profissionais</h2>
         <div class="professionals-grid" id="professionals-list"></div>
     </section>
 
+    <!-- Seção de Localização -->
+    <section id="localizacao">
+        <h2 class="section-title">Nossa Localização</h2>
+        <div class="location-container">
+            <div class="location-info">
+                <div class="info-card">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3>Endereço</h3>
+                    <p>Rua Jaime Perdigão, 353</p>
+                    <p>Ilha do Governador</p>
+                    <p>Rio de Janeiro - RJ</p>
+                    <p>CEP: 21920-240</p>
+                </div>
+                
+                <div class="info-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Horário de Funcionamento</h3>
+                    <p>Segunda a Sexta: 9h às 20h</p>
+                    <p>Sábado: 9h às 18h</p>
+                    <p>Domingo: Fechado</p>
+                </div>
+                
+                <div class="info-card">
+                    <i class="fas fa-phone-alt"></i>
+                    <h3>Contato</h3>
+                    <p>Tel: (21) 1234-5678</p>
+                    <p>WhatsApp: (21) 98765-4321</p>
+                    <p>Email: contato@belezailha.com.br</p>
+                </div>
+                
+                <div class="info-card">
+                    <i class="fas fa-bus"></i>
+                    <h3>Como Chegar</h3>
+                    <p>Ônibus: 321, 322, 323 (ponto em frente)</p>
+                    <p>Barca: Estação Praça XV - Ilha</p>
+                    <p>Estacionamento gratuito no local</p>
+                </div>
+            </div>
+            
+            <!-- Mapa -->
+            <div class="map-container">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.3563636363635!2d-43.2772!3d-22.8008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDQ4JzAyLjkiUyA0M8KwMTYnMzcuOSJX!5e0!3m2!1spt-BR!2sbr!4v1641234567890!5m2!1spt-BR!2sbr" 
+                    width="100%" 
+                    height="400" 
+                    style="border:0; border-radius: 15px;" 
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Agendamento -->
     <section id="agendamento">
         <h2 class="section-title">Agendamento Online</h2>
         <div class="appointment-container">
@@ -93,13 +178,35 @@
         </div>
     </section>
 
+    <!-- Seção Admin com Login -->
     <section id="admin">
         <h2 class="section-title">Área Administrativa</h2>
-        <div class="admin-panel">
+        
+        <!-- Tela de Login -->
+        <div id="login-screen" class="login-container">
+            <div class="login-box">
+                <h3>Acesso Restrito</h3>
+                <p>Digite a senha para gerenciar o salão</p>
+                <div class="form-group">
+                    <input type="password" id="admin-password" placeholder="Digite a senha" class="login-input">
+                    <button onclick="checkPassword()" class="btn login-btn">Entrar</button>
+                </div>
+                <p id="login-error" class="error-message" style="display: none; color: red; margin-top: 1rem;">Senha incorreta!</p>
+            </div>
+        </div>
+        
+        <!-- Painel Admin (inicialmente oculto) -->
+        <div id="admin-panel" class="admin-panel" style="display: none;">
+            <div class="admin-header">
+                <h3>Bem-vindo, Administrador!</h3>
+                <button onclick="logout()" class="btn logout-btn">Sair</button>
+            </div>
+            
             <div class="admin-tabs">
                 <button class="tab-btn active" onclick="showTab('agendamentos')">Agendamentos</button>
                 <button class="tab-btn" onclick="showTab('servicos-admin')">Serviços</button>
                 <button class="tab-btn" onclick="showTab('profissionais-admin')">Profissionais</button>
+                <button class="tab-btn" onclick="showTab('configuracoes')">Configurações</button>
             </div>
             
             <div id="agendamentos" class="tab-content active">
@@ -121,7 +228,7 @@
             
             <div id="servicos-admin" class="tab-content" style="display: none;">
                 <h3>Gerenciar Serviços</h3>
-                <button class="btn" onclick="openServiceModal()">Novo Serviço</button>
+                <button class="btn" onclick="openServiceModal()">+ Novo Serviço</button>
                 <table class="admin-table">
                     <thead>
                         <tr>
@@ -137,7 +244,7 @@
             
             <div id="profissionais-admin" class="tab-content" style="display: none;">
                 <h3>Gerenciar Profissionais</h3>
-                <button class="btn" onclick="openProfessionalModal()">Novo Profissional</button>
+                <button class="btn" onclick="openProfessionalModal()">+ Novo Profissional</button>
                 <table class="admin-table">
                     <thead>
                         <tr>
@@ -148,6 +255,26 @@
                     </thead>
                     <tbody id="professionals-admin-list"></tbody>
                 </table>
+            </div>
+            
+            <div id="configuracoes" class="tab-content" style="display: none;">
+                <h3>Configurações</h3>
+                <div class="config-card">
+                    <h4>Alterar Senha</h4>
+                    <div class="form-group">
+                        <label>Senha atual</label>
+                        <input type="password" id="current-password">
+                    </div>
+                    <div class="form-group">
+                        <label>Nova senha</label>
+                        <input type="password" id="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar nova senha</label>
+                        <input type="password" id="confirm-password">
+                    </div>
+                    <button onclick="changePassword()" class="btn">Alterar Senha</button>
+                </div>
             </div>
         </div>
     </section>
@@ -164,9 +291,35 @@
     </div>
 
     <footer>
-        <p>&copy; 2024 Beleza & Estilo. Todos os direitos reservados.</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Beleza & Estilo</h4>
+                <p>Seu salão de confiança na Ilha do Governador</p>
+            </div>
+            <div class="footer-section">
+                <h4>Endereço</h4>
+                <p>Rua Jaime Perdigão, 353</p>
+                <p>Ilha do Governador - RJ</p>
+                <p>CEP: 21920-240</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contato</h4>
+                <p>Tel: (21) 1234-5678</p>
+                <p>WhatsApp: (21) 98765-4321</p>
+                <p>Email: contato@belezailha.com.br</p>
+            </div>
+            <div class="footer-section">
+                <h4>Horário</h4>
+                <p>Seg-Sex: 9h às 20h</p>
+                <p>Sábado: 9h às 18h</p>
+                <p>Domingo: Fechado</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Beleza & Estilo - Ilha do Governador. Todos os direitos reservados.</p>
+        </div>
     </footer>
 
     <script src="script.js"></script>
 </body>
-</html>
+                </html>

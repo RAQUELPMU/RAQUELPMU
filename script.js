@@ -1,4 +1,21 @@
-// ===== SÓ FIREBASE - NADA DE JSON =====
+// ===== FIREBASE DIRETO AQUI =====
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDZdLxppl2HXTtw2cgdFFFcDIFH5yx9vDY",
+    authDomain: "raquelpmu1.firebaseapp.com",
+    projectId: "raquelpmu1",
+    storageBucket: "raquelpmu1.firebasestorage.app",
+    messagingSenderId: "81115737255",
+    appId: "1:81115737255:web:8b71ecb791666d9a263f82"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+console.log('🔥 Firebase conectado!');
+
+// ===== VARIÁVEIS =====
 let services = [];
 let professionals = [];
 let ADMIN_PASSWORD = "247126Ca";
@@ -8,18 +25,15 @@ const WHATSAPP_NUMBER = "5521992649522";
 // ===== CARREGAR DADOS =====
 async function carregarDados() {
     try {
-        console.log('Carregando...');
+        const profSnap = await db.collection('professionals').get();
+        professionals = profSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
-        const snap = await db.collection('professionals').get();
-        professionals = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
-        const snap2 = await db.collection('services').get();
-        services = snap2.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const servSnap = await db.collection('services').get();
+        services = servSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
         renderServices();
         renderProfessionals();
         if (isLoggedIn) renderAdminTables();
-        
     } catch (erro) {
         console.error('Erro:', erro);
         alert('Erro: ' + erro.message);
@@ -30,28 +44,22 @@ async function carregarDados() {
 function renderServices() {
     const el = document.getElementById('services-list');
     if (!el) return;
-    
-    el.innerHTML = services.map(s => {
-        const msg = `Olá! Quero agendar ${s.name}`;
-        const link = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-        return `
-            <div class="service-card">
-                <div class="service-img" style="background-image: url('${s.image}')"></div>
-                <div class="service-content">
-                    <h3>${s.name}</h3>
-                    <p class="service-price">R$ ${s.price}</p>
-                    <p>${s.duration} min</p>
-                    <a href="${link}" target="_blank" class="btn whatsapp-btn">Agendar</a>
-                </div>
+    el.innerHTML = services.map(s => `
+        <div class="service-card">
+            <div class="service-img" style="background-image: url('${s.image}')"></div>
+            <div class="service-content">
+                <h3>${s.name}</h3>
+                <p class="service-price">R$ ${s.price}</p>
+                <p>${s.duration} min</p>
+                <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Quero%20${s.name}" target="_blank" class="btn whatsapp-btn">Agendar</a>
             </div>
-        `;
-    }).join('');
+        </div>
+    `).join('');
 }
 
 function renderProfessionals() {
     const el = document.getElementById('professionals-list');
     if (!el) return;
-    
     el.innerHTML = professionals.map(p => `
         <div class="professional-card">
             <div class="professional-img" style="background-image: url('${p.image}')"></div>
@@ -62,9 +70,9 @@ function renderProfessionals() {
 }
 
 function renderAdminTables() {
-    const el1 = document.getElementById('professionals-admin-list');
-    if (el1) {
-        el1.innerHTML = professionals.map(p => `
+    const profAdmin = document.getElementById('professionals-admin-list');
+    if (profAdmin) {
+        profAdmin.innerHTML = professionals.map(p => `
             <tr>
                 <td>${p.name}</td>
                 <td>${p.specialty}</td>
@@ -76,9 +84,9 @@ function renderAdminTables() {
         `).join('');
     }
     
-    const el2 = document.getElementById('services-admin-list');
-    if (el2) {
-        el2.innerHTML = services.map(s => `
+    const servAdmin = document.getElementById('services-admin-list');
+    if (servAdmin) {
+        servAdmin.innerHTML = services.map(s => `
             <tr>
                 <td>${s.name}</td>
                 <td>R$ ${s.price}</td>
@@ -99,7 +107,9 @@ function checkPassword() {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
         renderAdminTables();
-    } else alert('Senha errada');
+    } else {
+        alert('Senha incorreta!');
+    }
 }
 
 function logout() {
@@ -115,56 +125,85 @@ function showTab(tabName) {
     event.target.classList.add('active');
 }
 
-// ===== PROFISSIONAIS =====
-function openProfessionalModal(p = null) {
+// ===== CRUD PROFISSIONAIS =====
+function openProfessionalModal(prof = null) {
+    const modal = document.getElementById('modal');
     document.getElementById('modal-body').innerHTML = `
-        <form onsubmit="saveProfessional(event, ${p ? `'${p.id}'` : 'null'})">
-            <input type="text" id="prof-name" value="${p ? p.name : ''}" placeholder="Nome" required>
-            <input type="text" id="prof-spec" value="${p ? p.specialty : ''}" placeholder="Especialidade" required>
-            <input type="url" id="prof-img" value="${p ? p.image : 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500'}" placeholder="URL da imagem">
-            <button type="submit">Salvar</button>
+        <form onsubmit="saveProfessional(event, ${prof ? `'${prof.id}'` : 'null'})">
+            <div class="form-group">
+                <label>Nome</label>
+                <input type="text" id="prof-name" value="${prof ? prof.name : ''}" required>
+            </div>
+            <div class="form-group">
+                <label>Especialidade</label>
+                <input type="text" id="prof-specialty" value="${prof ? prof.specialty : ''}" required>
+            </div>
+            <div class="form-group">
+                <label>URL da imagem</label>
+                <input type="url" id="prof-image" value="${prof ? prof.image : 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500'}">
+            </div>
+            <button type="submit" class="btn">Salvar</button>
         </form>
     `;
-    document.getElementById('modal-title').textContent = p ? 'Editar' : 'Novo Profissional';
-    document.getElementById('modal').classList.add('active');
+    document.getElementById('modal-title').textContent = prof ? 'Editar Profissional' : 'Novo Profissional';
+    modal.classList.add('active');
 }
 
 async function saveProfessional(event, id) {
     event.preventDefault();
     const data = {
         name: document.getElementById('prof-name').value,
-        specialty: document.getElementById('prof-spec').value,
-        image: document.getElementById('prof-img').value
+        specialty: document.getElementById('prof-specialty').value,
+        image: document.getElementById('prof-image').value
     };
+    
     try {
-        if (id && id !== 'null') await db.collection('professionals').doc(id).update(data);
-        else await db.collection('professionals').add(data);
-        alert('Salvo!');
+        if (id && id !== 'null') {
+            await db.collection('professionals').doc(id).update(data);
+        } else {
+            await db.collection('professionals').add(data);
+        }
+        alert('✅ Profissional salvo!');
         closeModal();
         carregarDados();
-    } catch (e) { alert('Erro: ' + e.message); }
+    } catch (erro) {
+        alert('Erro: ' + erro.message);
+    }
 }
 
 async function deleteProfessional(id) {
-    if (confirm('Excluir?')) {
+    if (confirm('Excluir este profissional?')) {
         await db.collection('professionals').doc(id).delete();
         carregarDados();
     }
 }
 
-// ===== SERVIÇOS =====
-function openServiceModal(s = null) {
+// ===== CRUD SERVIÇOS =====
+function openServiceModal(serv = null) {
+    const modal = document.getElementById('modal');
     document.getElementById('modal-body').innerHTML = `
-        <form onsubmit="saveService(event, ${s ? `'${s.id}'` : 'null'})">
-            <input type="text" id="serv-name" value="${s ? s.name : ''}" placeholder="Nome" required>
-            <input type="number" id="serv-price" value="${s ? s.price : ''}" placeholder="Preço" required>
-            <input type="number" id="serv-dur" value="${s ? s.duration : ''}" placeholder="Duração (min)" required>
-            <input type="url" id="serv-img" value="${s ? s.image : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500'}" placeholder="URL da imagem">
-            <button type="submit">Salvar</button>
+        <form onsubmit="saveService(event, ${serv ? `'${serv.id}'` : 'null'})">
+            <div class="form-group">
+                <label>Nome do serviço</label>
+                <input type="text" id="serv-name" value="${serv ? serv.name : ''}" required>
+            </div>
+            <div class="form-group">
+                <label>Preço (R$)</label>
+                <input type="number" id="serv-price" value="${serv ? serv.price : ''}" required>
+            </div>
+            <div class="form-group">
+                <label>Duração (minutos)</label>
+                <input type="number" id="serv-duration" value="${serv ? serv.duration : ''}" required>
+            </div>
+            <div class="form-group">
+                <label>URL da imagem</label>
+                <input type="url" id="serv-image" value="${serv ? serv.image : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500'}">
+            </div>
+            <button type="submit" class="btn">Salvar</button>
         </form>
     `;
-    document.getElementById('modal-title').textContent = s ? 'Editar' : 'Novo Serviço';
-    document.getElementById('modal').classList.add('active');
+    document.getElementById('modal-title').textContent = serv ? 'Editar Serviço' : 'Novo Serviço';
+    modal.classList.add('active');
 }
 
 async function saveService(event, id) {
@@ -172,31 +211,39 @@ async function saveService(event, id) {
     const data = {
         name: document.getElementById('serv-name').value,
         price: Number(document.getElementById('serv-price').value),
-        duration: Number(document.getElementById('serv-dur').value),
-        image: document.getElementById('serv-img').value
+        duration: Number(document.getElementById('serv-duration').value),
+        image: document.getElementById('serv-image').value
     };
+    
     try {
-        if (id && id !== 'null') await db.collection('services').doc(id).update(data);
-        else await db.collection('services').add(data);
-        alert('Salvo!');
+        if (id && id !== 'null') {
+            await db.collection('services').doc(id).update(data);
+        } else {
+            await db.collection('services').add(data);
+        }
+        alert('✅ Serviço salvo!');
         closeModal();
         carregarDados();
-    } catch (e) { alert('Erro: ' + e.message); }
+    } catch (erro) {
+        alert('Erro: ' + erro.message);
+    }
 }
 
 async function deleteService(id) {
-    if (confirm('Excluir?')) {
+    if (confirm('Excluir este serviço?')) {
         await db.collection('services').doc(id).delete();
         carregarDados();
     }
 }
 
 function editProfessional(id) {
-    openProfessionalModal(professionals.find(p => p.id === id));
+    const prof = professionals.find(p => p.id === id);
+    openProfessionalModal(prof);
 }
 
 function editService(id) {
-    openServiceModal(services.find(s => s.id === id));
+    const serv = services.find(s => s.id === id);
+    openServiceModal(serv);
 }
 
 function closeModal() {
@@ -204,19 +251,28 @@ function closeModal() {
 }
 
 function agendarWhatsApp() {
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Quero agendar.`, '_blank');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Gostaria de agendar um horário.`, '_blank');
 }
 
+// ===== INICIAR =====
 document.addEventListener('DOMContentLoaded', () => {
     carregarDados();
-    const btn = document.querySelector('.hero-buttons .btn:first-child');
-    if (btn) btn.onclick = (e) => { e.preventDefault(); agendarWhatsApp(); };
+    
+    const btnAgendar = document.querySelector('.hero-buttons .btn:first-child');
+    if (btnAgendar) {
+        btnAgendar.onclick = (e) => {
+            e.preventDefault();
+            agendarWhatsApp();
+        };
+    }
+    
     if (isLoggedIn) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
     }
 });
 
-window.onclick = (e) => {
-    if (e.target === document.getElementById('modal')) closeModal();
+window.onclick = (event) => {
+    const modal = document.getElementById('modal');
+    if (event.target === modal) closeModal();
 };

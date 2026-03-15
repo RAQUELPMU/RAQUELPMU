@@ -28,7 +28,7 @@ let services = [
         name: 'Micropigmentação de Sobrancelhas',
         price: 450,
         duration: 120,
-        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773595593/zrpgxvvo0r8gkakmmmc4.jpg'
+        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773615529/g6fk0xn7lbsawlqtpey6.jpg'
     }
 ];
 

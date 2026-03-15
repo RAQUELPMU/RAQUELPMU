@@ -50,17 +50,11 @@ function renderProfessionals() {
     if (!container) return;
     
     container.innerHTML = professionals.map(prof => {
-        const mensagem = `Olá! Gostaria de agendar um horário com ${prof.name} (especialidade: ${prof.specialty}).`;
-        const linkWhatsApp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
-        
         return `
             <div class="professional-card">
                 <div class="professional-img" style="background-image: url('${prof.image}')"></div>
                 <h3>${prof.name}</h3>
                 <p>Especialidade: ${prof.specialty}</p>
-                <a href="${linkWhatsApp}" target="_blank" class="btn whatsapp-btn" style="margin-top: 1rem;">
-                    <i class="fab fa-whatsapp"></i> Agendar com ${prof.name}
-                </a>
             </div>
         `;
     }).join('');
@@ -124,10 +118,10 @@ document.addEventListener('DOMContentLoaded', function() {
     renderServices();
     renderProfessionals();
     
-    // Adicionar evento ao botão Agendar Agora do topo
-    const btnAgendar = document.querySelector('a[href="#agendamento"]');
-    if (btnAgendar) {
-        btnAgendar.addEventListener('click', function(e) {
+    // Adicionar evento ao botão Agendar Agora do hero section
+    const heroButton = document.querySelector('.hero-buttons .btn:first-child');
+    if (heroButton) {
+        heroButton.addEventListener('click', function(e) {
             e.preventDefault();
             agendarWhatsApp();
         });

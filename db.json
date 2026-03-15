@@ -1,17 +1,1 @@
-{
-  "services": [
-    { "id": 1, "name": "Corte de Cabelo", "price": 50, "duration": 60, "image": "https://images.unsplash.com/photo-1560869713-7d0a29430803?w=500" },
-    { "id": 2, "name": "Coloração", "price": 120, "duration": 120, "image": "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500" },
-    { "id": 3, "name": "Manicure", "price": 35, "duration": 45, "image": "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500" },
-    { "id": 4, "name": "Pedicure", "price": 40, "duration": 45, "image": "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500" },
-    { "id": 5, "name": "Maquiagem", "price": 80, "duration": 60, "image": "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=500" },
-    { "id": 6, "name": "Escova", "price": 45, "duration": 60, "image": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500" }
-  ],
-  "professionals": [
-    { "id": 1, "name": "Ana Silva", "specialty": "Cabelos", "image": "https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500" },
-    { "id": 2, "name": "Maria Oliveira", "specialty": "Maquiagem", "image": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500" },
-    { "id": 3, "name": "João Santos", "specialty": "Barba", "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500" },
-    { "id": 4, "name": "Carla Souza", "specialty": "Unhas", "image": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500" }
-  ],
-  "appointments": []
-}
+

@@ -66,7 +66,7 @@ function renderServices() {
                 <div class="service-img" style="background-image: url('${service.image}')"></div>
                 <div class="service-content">
                     <h3>${service.name}</h3>
-                    <p class="service-price">R$ ${service.price}</p>
+                    <p class="service-price">R$:${service.price}</p>
                     <p>Duração: ${service.duration} min</p>
                     <a href="${linkWhatsApp}" target="_blank" class="btn whatsapp-btn">
                         <i class="fab fa-whatsapp"></i> Agendar via WhatsApp

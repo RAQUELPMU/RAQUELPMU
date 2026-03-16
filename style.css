@@ -882,3 +882,78 @@ footer {
         font-size: 1.8rem;
     }
 }
+/* ===== AJUSTES ESPECÍFICOS PARA IPHONE ===== */
+
+/* Ajuste de fontes */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Garantir que os cards não quebrem */
+.service-card, 
+.professional-card, 
+.info-card {
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+    -webkit-box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* Ajuste para botões no iPhone */
+.btn {
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+}
+
+/* Ajuste para imagens */
+.service-img,
+.professional-img {
+    -webkit-background-size: cover;
+    background-size: cover;
+}
+
+/* Ajuste para grid no iPhone */
+.services-grid,
+.professionals-grid,
+.location-info {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+/* Media query específica para iPhone */
+@media screen and (max-width: 480px) {
+    .service-card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .hero h1 {
+        font-size: 2rem !important;
+    }
+    
+    .hero-address {
+        font-size: 0.9rem !important;
+    }
+}
+
+/* Ajuste para Safari no iPhone */
+@supports (-webkit-touch-callout: none) {
+    /* CSS específico para Safari */
+    .service-card {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+    
+    .btn {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+}

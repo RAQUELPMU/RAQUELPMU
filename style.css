@@ -957,3 +957,77 @@ body {
         transform: translateZ(0);
     }
 }
+/* ===== AJUSTE ESPECÍFICO PARA IMAGENS NO IPHONE ===== */
+
+/* Ajuste para todos os cards de serviço */
+.service-card {
+    width: 100%;
+    max-width: 350px; /* Tamanho máximo igual ao computador */
+    margin: 0 auto 20px auto; /* Centraliza e dá espaço */
+}
+
+/* Ajuste para as imagens dos serviços */
+.service-img {
+    height: 220px !important; /* Força a altura igual ao computador */
+    width: 100% !important;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+/* Ajuste para os cards de profissionais */
+.professional-card {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto 20px auto;
+}
+
+/* Ajuste para as imagens dos profissionais */
+.professional-img {
+    width: 160px !important;
+    height: 160px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    margin: 0 auto 1rem auto !important;
+}
+
+/* Garantir que o grid funcione no iPhone */
+.services-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 10px;
+}
+
+.professionals-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 10px;
+}
+
+/* Ajuste específico para Safari no iPhone */
+@supports (-webkit-touch-callout: none) {
+    .service-img {
+        height: 220px !important;
+        -webkit-background-size: cover !important;
+    }
+    
+    .professional-img {
+        width: 160px !important;
+        height: 160px !important;
+        -webkit-background-size: cover !important;
+    }
+}
+
+/* Para telas muito pequenas (iPhone SE) */
+@media screen and (max-width: 380px) {
+    .service-img {
+        height: 180px !important;
+    }
+    
+    .service-card {
+        max-width: 300px;
+    }
+}

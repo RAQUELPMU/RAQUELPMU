@@ -201,7 +201,7 @@
                             <th>Data/Hora</th>
                             <th>Status</th>
                             <th>Ações</th>
-                         </tr>
+                        </tr>
                     </thead>
                     <tbody id="appointments-list"></tbody>
                 </table>
@@ -212,12 +212,12 @@
                 <button class="btn" onclick="openServiceModal()">+ Novo Serviço</button>
                 <table class="admin-table">
                     <thead>
-                        32
+                        <tr>
                             <th>Nome</th>
                             <th>Preço</th>
                             <th>Duração</th>
                             <th>Ações</th>
-                         </tr>
+                        </tr>
                     </thead>
                     <tbody id="services-admin-list"></tbody>
                 </table>
@@ -228,11 +228,11 @@
                 <button class="btn" onclick="openProfessionalModal()">+ Novo Profissional</button>
                 <table class="admin-table">
                     <thead>
-                        32
+                        <tr>
                             <th>Nome</th>
                             <th>Especialidade</th>
                             <th>Ações</th>
-                         </tr>
+                        </tr>
                     </thead>
                     <tbody id="professionals-admin-list"></tbody>
                 </table>
@@ -283,28 +283,6 @@
         </div>
     </footer>
 
-    <!-- ===== FIREBASE (NO FINAL, ANTES DO SCRIPT.JS) ===== -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDZdLxppl2HXTtw2cgdFFFcDIFH5yx9vDY",
-            authDomain: "raquelpmu1.firebaseapp.com",
-            projectId: "raquelpmu1",
-            storageBucket: "raquelpmu1.firebasestorage.app",
-            messagingSenderId: "81115737255",
-            appId: "1:81115737255:web:2b292d0b3f8eb1c5263f82",
-            measurementId: "G-E6Q62NNQCR"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        console.log('🔥 Firebase conectado!');
-        window.db = db;
-    </script>
-
     <script src="script.js"></script>
 </body>
-</html>
+                                                     </html>

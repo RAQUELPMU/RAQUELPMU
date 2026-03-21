@@ -1,5 +1,5 @@
 // ===== SCRIPT PRINCIPAL COM FIREBASE =====
-// O Firebase vem do firebase-config.js (arquivo separado)
+// O Firebase vem do index.html (já está configurado)
 
 let services = [];
 let professionals = [];
@@ -25,6 +25,8 @@ async function carregarDados() {
         if (!profSnap.empty) {
             professionals = profSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             console.log('✅ Profissionais carregados:', professionals.length);
+        } else {
+            professionals = [];
         }
         
         // Buscar serviços
@@ -32,6 +34,8 @@ async function carregarDados() {
         if (!servSnap.empty) {
             services = servSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             console.log('✅ Serviços carregados:', services.length);
+        } else {
+            services = [];
         }
         
         // Se não tiver dados no Firebase, criar os iniciais
@@ -171,7 +175,7 @@ function renderAdminTables() {
                         <button class="edit-btn" onclick="editProfessional('${p.id}')">Editar</button>
                         <button class="delete-btn" onclick="deleteProfessional('${p.id}')">Excluir</button>
                     </td>
-                </tr>
+                 </tr>
             `).join('');
         }
     }
@@ -190,7 +194,7 @@ function renderAdminTables() {
                         <button class="edit-btn" onclick="editService('${s.id}')">Editar</button>
                         <button class="delete-btn" onclick="deleteService('${s.id}')">Excluir</button>
                     </td>
-                </tr>
+                 </tr>
             `).join('');
         }
     }

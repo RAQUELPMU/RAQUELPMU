@@ -1,56 +1,93 @@
-// ===== DADOS DO SEU SALÃO =====
-// Tudo salvo aqui mesmo, sem Firebase, sem JSON, sem complicação!
+<!-- Firebase Config (NOVO ARQUIVO) -->
+<script type="module" src="firebase-config.js"></script>
 
-let services = [
-    {
-        id: 1,
-        name: 'Manicure',
-        price: 35,
-        duration: 45,
-        image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500'
-    },
-    {
-        id: 2,
-        name: 'Pedicure',
-        price: 40,
-        duration: 45,
-        image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500'
-    },
-    {
-        id: 3,
-        name: 'Design de Sobrancelhas',
-        price: 50,
-        duration: 30,
-        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600811/boco4k7hfxuyzcwmfpog.jpg',
-    },
-    {
-        id: 4,
-        name: 'Micropigmentação de Sobrancelhas',
-        price: 450,
-        duration: 120,
-        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773615529/g6fk0xn7lbsawlqtpey6.jpg',
-    }
-];
+<!-- Seu script principal -->
+<script src="script.js"></script>// ===== AGORA O SCRIPT USA O FIREBASE =====
+// O db já vem do firebase-config.js
 
-let professionals = [
-    {
-        id: 1,
-        name: 'Raquel Sobreira',
-        specialty: 'Unhas e Sobrancelha',
-        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600488/lyrh3xheum9kd9cqtjk4.png'
-    },
-    {
-        id: 2,
-        name: 'Glauce Costa',
-        specialty: 'Podóloga',
-        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600024/wdf4gnrwo9hdhz6c7ocv.png'
-    }
-];
-
+let services = [];
+let professionals = [];
 let appointments = [];
 let ADMIN_PASSWORD = "247126Ca";
 let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
 const WHATSAPP_NUMBER = "5521992649522";
+
+// ===== CARREGAR DADOS DO FIREBASE =====
+async function carregarDados() {
+    try {
+        console.log('🔄 Buscando dados do Firebase...');
+        
+        // Buscar profissionais
+        const profSnap = await db.collection('professionals').get();
+        professionals = profSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // Buscar serviços
+        const servSnap = await db.collection('services').get();
+        services = servSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        console.log('✅ Dados carregados!', professionals.length, 'profissionais,', services.length, 'serviços');
+        
+        // Se não tiver dados, criar os iniciais
+        if (services.length === 0) {
+            await criarDadosIniciais();
+        }
+        
+        renderServices();
+        renderProfessionals();
+        if (isLoggedIn) renderAdminTables();
+        
+    } catch (erro) {
+        console.error('❌ Erro:', erro);
+        // Se der erro, usa dados locais de backup
+        usarDadosLocais();
+    }
+}
+
+// ===== DADOS INICIAIS PARA CRIAR NO FIREBASE =====
+async function criarDadosIniciais() {
+    console.log('📝 Criando dados iniciais...');
+    
+    const servicosIniciais = [
+        { name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500' },
+        { name: 'Pedicure', price: 40, duration: 45, image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500' },
+        { name: 'Design de Sobrancelhas', price: 50, duration: 30, image: 'https://images.unsplash.com/photo-1621607512214-68297480165e?w=500' },
+        { name: 'Micropigmentação', price: 450, duration: 120, image: 'https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?w=500' }
+    ];
+    
+    const profissionaisIniciais = [
+        { name: 'Raquel Sobreira', specialty: 'Unhas e Sobrancelha', image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600488/lyrh3xheum9kd9cqtjk4.png' },
+        { name: 'Glauce Costa', specialty: 'Podóloga', image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600024/wdf4gnrwo9hdhz6c7ocv.png' }
+    ];
+    
+    for (const servico of servicosIniciais) {
+        await db.collection('services').add(servico);
+    }
+    
+    for (const prof of profissionaisIniciais) {
+        await db.collection('professionals').add(prof);
+    }
+    
+    console.log('✅ Dados iniciais criados!');
+    carregarDados();
+}
+
+// ===== BACKUP LOCAL (CASO FIREBASE FALHE) =====
+function usarDadosLocais() {
+    console.log('⚠️ Usando dados locais de backup');
+    services = [
+        { id: 1, name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500' },
+        { id: 2, name: 'Pedicure', price: 40, duration: 45, image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500' },
+        { id: 3, name: 'Design de Sobrancelhas', price: 50, duration: 30, image: 'https://images.unsplash.com/photo-1621607512214-68297480165e?w=500' },
+        { id: 4, name: 'Micropigmentação', price: 450, duration: 120, image: 'https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?w=500' }
+    ];
+    professionals = [
+        { id: 1, name: 'Raquel Sobreira', specialty: 'Unhas e Sobrancelha', image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600488/lyrh3xheum9kd9cqtjk4.png' },
+        { id: 2, name: 'Glauce Costa', specialty: 'Podóloga', image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600024/wdf4gnrwo9hdhz6c7ocv.png' }
+    ];
+    renderServices();
+    renderProfessionals();
+    if (isLoggedIn) renderAdminTables();
+}
 
 // ===== FUNÇÕES DE RENDERIZAÇÃO =====
 function renderServices() {
@@ -59,7 +96,7 @@ function renderServices() {
     
     container.innerHTML = services.map(service => {
         const mensagem = `Olá! Gostaria de agendar ${service.name}.`;
-        const linkWhatsApp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
+        const link = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
         
         return `
             <div class="service-card">
@@ -68,7 +105,7 @@ function renderServices() {
                     <h3>${service.name}</h3>
                     <p class="service-price">R$:${service.price}</p>
                     <p>Duração: ${service.duration} min</p>
-                    <a href="${linkWhatsApp}" target="_blank" class="btn whatsapp-btn">
+                    <a href="${link}" target="_blank" class="btn whatsapp-btn">
                         <i class="fab fa-whatsapp"></i> Agendar via WhatsApp
                     </a>
                 </div>
@@ -81,84 +118,59 @@ function renderProfessionals() {
     const container = document.getElementById('professionals-list');
     if (!container) return;
     
-    container.innerHTML = professionals.map(prof => {
-        return `
-            <div class="professional-card">
-                <div class="professional-img" style="background-image: url('${prof.image}')"></div>
-                <h3>${prof.name}</h3>
-                <p>Especialidade: ${prof.specialty}</p>
-            </div>
-        `;
-    }).join('');
+    container.innerHTML = professionals.map(prof => `
+        <div class="professional-card">
+            <div class="professional-img" style="background-image: url('${prof.image}')"></div>
+            <h3>${prof.name}</h3>
+            <p>Especialidade: ${prof.specialty}</p>
+        </div>
+    `).join('');
 }
 
 function agendarWhatsApp() {
-    const mensagem = "Olá! Gostaria de agendar um horário no salão.";
-    const link = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
-    window.open(link, '_blank');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Quero agendar um horário.`, '_blank');
 }
 
 function renderAdminTables() {
-    const appointmentsList = document.getElementById('appointments-list');
-    if (appointmentsList) {
-        appointmentsList.innerHTML = appointments.map(apt => `
+    const profAdmin = document.getElementById('professionals-admin-list');
+    if (profAdmin) {
+        profAdmin.innerHTML = professionals.map(p => `
             <tr>
-                <td>${apt.client}</td>
-                <td>${apt.service}</td>
-                <td>${apt.professional}</td>
-                <td>${apt.date} ${apt.time}</td>
-                <td><span class="status-badge status-${apt.status}">${apt.status === 'confirmed' ? 'Confirmado' : 'Pendente'}</span></td>
+                <td>${p.name}${p.id ? '' : ' (local)'}</td>
+                <td>${p.specialty}</td>
                 <td>
-                    <button class="edit-btn" onclick="editAppointment(${apt.id})">Editar</button>
-                    <button class="delete-btn" onclick="deleteAppointment(${apt.id})">Excluir</button>
+                    <button onclick="editProfessional('${p.id}')">Editar</button>
+                    <button onclick="deleteProfessional('${p.id}')">Excluir</button>
                 </td>
-            </tr>
+             </tr>
         `).join('');
     }
-
-    const servicesAdminList = document.getElementById('services-admin-list');
-    if (servicesAdminList) {
-        servicesAdminList.innerHTML = services.map(service => `
+    
+    const servAdmin = document.getElementById('services-admin-list');
+    if (servAdmin) {
+        servAdmin.innerHTML = services.map(s => `
             <tr>
-                <td>${service.name}</td>
-                <td>R$ ${service.price}</td>
-                <td>${service.duration} min</td>
+                <td>${s.name}${s.id ? '' : ' (local)'}</td>
+                <td>R$:${s.price}</td>
+                <td>${s.duration} min</td>
                 <td>
-                    <button class="edit-btn" onclick="editService(${service.id})">Editar</button>
-                    <button class="delete-btn" onclick="deleteService(${service.id})">Excluir</button>
-                </td>
-            </tr>
-        `).join('');
-    }
-
-    const professionalsAdminList = document.getElementById('professionals-admin-list');
-    if (professionalsAdminList) {
-        professionalsAdminList.innerHTML = professionals.map(prof => `
-            <tr>
-                <td>${prof.name}</td>
-                <td>${prof.specialty}</td>
-                <td>
-                    <button class="edit-btn" onclick="editProfessional(${prof.id})">Editar</button>
-                    <button class="delete-btn" onclick="deleteProfessional(${prof.id})">Excluir</button>
-                </td>
-            </tr>
+                    <button onclick="editService('${s.id}')">Editar</button>
+                    <button onclick="deleteService('${s.id}')">Excluir</button>
+                 </td>
+             </tr>
         `).join('');
     }
 }
 
 // ===== FUNÇÕES DE LOGIN =====
 function checkPassword() {
-    const passwordInput = document.getElementById('admin-password');
-    const errorElement = document.getElementById('login-error');
-    
-    if (passwordInput.value === ADMIN_PASSWORD) {
+    if (document.getElementById('admin-password').value === ADMIN_PASSWORD) {
         sessionStorage.setItem('adminLoggedIn', 'true');
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
-        errorElement.style.display = 'none';
         renderAdminTables();
     } else {
-        errorElement.style.display = 'block';
+        alert('Senha incorreta!');
     }
 }
 
@@ -169,8 +181,8 @@ function logout() {
 }
 
 function showTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(tabName).style.display = 'block';
     event.target.classList.add('active');
 }
@@ -183,189 +195,154 @@ function checkAdminAuth() {
     return true;
 }
 
-// ===== CRUD SERVIÇOS =====
-function openServiceModal(service = null) {
-    if (!checkAdminAuth()) return;
-    
-    const modal = document.getElementById('modal');
-    const modalBody = document.getElementById('modal-body');
-    
-    modalBody.innerHTML = `
-        <form onsubmit="saveService(event, ${service ? service.id : 'null'})">
-            <div class="form-group">
-                <label>Nome do serviço</label>
-                <input type="text" id="service-name" value="${service ? service.name : ''}" required>
-            </div>
-            <div class="form-group">
-                <label>Preço</label>
-                <input type="number" id="service-price" value="${service ? service.price : ''}" required>
-            </div>
-            <div class="form-group">
-                <label>Duração (minutos)</label>
-                <input type="number" id="service-duration" value="${service ? service.duration : ''}" required>
-            </div>
-            <div class="form-group">
-                <label>URL da imagem</label>
-                <input type="url" id="service-image" value="${service ? service.image : ''}">
-            </div>
-            <button type="submit" class="btn">Salvar</button>
-        </form>
-    `;
-    
-    document.getElementById('modal-title').textContent = service ? 'Editar Serviço' : 'Novo Serviço';
-    modal.classList.add('active');
-}
-
-function saveService(event, id) {
-    event.preventDefault();
-    
-    const serviceData = {
-        name: document.getElementById('service-name').value,
-        price: parseFloat(document.getElementById('service-price').value),
-        duration: parseInt(document.getElementById('service-duration').value),
-        image: document.getElementById('service-image').value || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500'
-    };
-    
-    if (id && id !== 'null') {
-        const index = services.findIndex(s => s.id == id);
-        services[index] = { ...services[index], ...serviceData };
-    } else {
-        serviceData.id = services.length + 1;
-        services.push(serviceData);
-    }
-    
-    renderServices();
-    renderAdminTables();
-    closeModal();
-    alert('✅ Serviço salvo com sucesso!');
-}
-
-function deleteService(id) {
-    if (!checkAdminAuth()) return;
-    if (confirm('Tem certeza que deseja excluir este serviço?')) {
-        services = services.filter(s => s.id != id);
-        renderServices();
-        renderAdminTables();
-        alert('✅ Serviço excluído com sucesso!');
-    }
-}
-
 // ===== CRUD PROFISSIONAIS =====
-function openProfessionalModal(professional = null) {
+function openProfessionalModal(prof = null) {
     if (!checkAdminAuth()) return;
-    
     const modal = document.getElementById('modal');
-    const modalBody = document.getElementById('modal-body');
-    
-    modalBody.innerHTML = `
-        <form onsubmit="saveProfessional(event, ${professional ? professional.id : 'null'})">
+    document.getElementById('modal-body').innerHTML = `
+        <form onsubmit="saveProfessional(event, ${prof ? `'${prof.id}'` : 'null'})">
             <div class="form-group">
-                <label>Nome do profissional</label>
-                <input type="text" id="professional-name" value="${professional ? professional.name : ''}" required>
+                <label>Nome</label>
+                <input type="text" id="prof-name" value="${prof ? prof.name : ''}" required>
             </div>
             <div class="form-group">
                 <label>Especialidade</label>
-                <input type="text" id="professional-specialty" value="${professional ? professional.specialty : ''}" required>
+                <input type="text" id="prof-spec" value="${prof ? prof.specialty : ''}" required>
             </div>
             <div class="form-group">
                 <label>URL da imagem</label>
-                <input type="url" id="professional-image" value="${professional ? professional.image : 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500'}">
+                <input type="url" id="prof-img" value="${prof ? prof.image : 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500'}">
             </div>
             <button type="submit" class="btn">Salvar</button>
         </form>
     `;
-    
-    document.getElementById('modal-title').textContent = professional ? 'Editar Profissional' : 'Novo Profissional';
+    document.getElementById('modal-title').textContent = prof ? 'Editar' : 'Novo Profissional';
     modal.classList.add('active');
 }
 
-function saveProfessional(event, id) {
+async function saveProfessional(event, id) {
     event.preventDefault();
+    if (!checkAdminAuth()) return;
     
-    const professionalData = {
-        name: document.getElementById('professional-name').value,
-        specialty: document.getElementById('professional-specialty').value,
-        image: document.getElementById('professional-image').value
+    const data = {
+        name: document.getElementById('prof-name').value,
+        specialty: document.getElementById('prof-spec').value,
+        image: document.getElementById('prof-img').value
     };
     
-    if (id && id !== 'null') {
-        const index = professionals.findIndex(p => p.id == id);
-        professionals[index] = { ...professionals[index], ...professionalData };
-    } else {
-        professionalData.id = professionals.length + 1;
-        professionals.push(professionalData);
+    try {
+        if (id && id !== 'null') {
+            await db.collection('professionals').doc(id).update(data);
+            alert('✅ Profissional atualizado!');
+        } else {
+            await db.collection('professionals').add(data);
+            alert('✅ Profissional criado!');
+        }
+        carregarDados();
+        closeModal();
+    } catch (erro) {
+        alert('Erro: ' + erro.message);
     }
+}
+
+async function deleteProfessional(id) {
+    if (!checkAdminAuth()) return;
+    if (confirm('Excluir?')) {
+        await db.collection('professionals').doc(id).delete();
+        carregarDados();
+    }
+}
+
+// ===== CRUD SERVIÇOS =====
+function openServiceModal(serv = null) {
+    if (!checkAdminAuth()) return;
+    const modal = document.getElementById('modal');
+    document.getElementById('modal-body').innerHTML = `
+        <form onsubmit="saveService(event, ${serv ? `'${serv.id}'` : 'null'})">
+            <div class="form-group">
+                <label>Nome</label>
+                <input type="text" id="serv-name" value="${serv ? serv.name : ''}" required>
+            </div>
+            <div class="form-group">
+                <label>Preço</label>
+                <input type="number" id="serv-price" value="${serv ? serv.price : ''}" required>
+            </div>
+            <div class="form-group">
+                <label>Duração (min)</label>
+                <input type="number" id="serv-dur" value="${serv ? serv.duration : ''}" required>
+            </div>
+            <div class="form-group">
+                <label>URL da imagem</label>
+                <input type="url" id="serv-img" value="${serv ? serv.image : 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500'}">
+            </div>
+            <button type="submit" class="btn">Salvar</button>
+        </form>
+    `;
+    document.getElementById('modal-title').textContent = serv ? 'Editar' : 'Novo Serviço';
+    modal.classList.add('active');
+}
+
+async function saveService(event, id) {
+    event.preventDefault();
+    if (!checkAdminAuth()) return;
     
-    renderProfessionals();
-    renderAdminTables();
-    closeModal();
-    alert('✅ Profissional salvo com sucesso!');
-}
-
-function deleteProfessional(id) {
-    if (!checkAdminAuth()) return;
-    if (confirm('Tem certeza que deseja excluir este profissional?')) {
-        professionals = professionals.filter(p => p.id != id);
-        renderProfessionals();
-        renderAdminTables();
-        alert('✅ Profissional excluído com sucesso!');
+    const data = {
+        name: document.getElementById('serv-name').value,
+        price: Number(document.getElementById('serv-price').value),
+        duration: Number(document.getElementById('serv-dur').value),
+        image: document.getElementById('serv-img').value
+    };
+    
+    try {
+        if (id && id !== 'null') {
+            await db.collection('services').doc(id).update(data);
+            alert('✅ Serviço atualizado!');
+        } else {
+            await db.collection('services').add(data);
+            alert('✅ Serviço criado!');
+        }
+        carregarDados();
+        closeModal();
+    } catch (erro) {
+        alert('Erro: ' + erro.message);
     }
 }
 
-// ===== FUNÇÕES DE AGENDAMENTO =====
-function editAppointment(id) {
+async function deleteService(id) {
     if (!checkAdminAuth()) return;
-    alert('Funcionalidade em desenvolvimento');
-}
-
-function deleteAppointment(id) {
-    if (!checkAdminAuth()) return;
-    if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
-        appointments = appointments.filter(a => a.id != id);
-        renderAdminTables();
-        alert('✅ Agendamento cancelado!');
+    if (confirm('Excluir?')) {
+        await db.collection('services').doc(id).delete();
+        carregarDados();
     }
-}
-
-function editService(id) {
-    if (!checkAdminAuth()) return;
-    const service = services.find(s => s.id == id);
-    openServiceModal(service);
 }
 
 function editProfessional(id) {
-    if (!checkAdminAuth()) return;
-    const professional = professionals.find(p => p.id == id);
-    openProfessionalModal(professional);
+    const prof = professionals.find(p => p.id === id);
+    openProfessionalModal(prof);
+}
+
+function editService(id) {
+    const serv = services.find(s => s.id === id);
+    openServiceModal(serv);
 }
 
 function closeModal() {
     document.getElementById('modal').classList.remove('active');
 }
 
-// ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', function() {
-    renderServices();
-    renderProfessionals();
+// ===== INICIAR =====
+document.addEventListener('DOMContentLoaded', () => {
+    carregarDados();
     
-    const heroButton = document.querySelector('.hero-buttons .btn:first-child');
-    if (heroButton) {
-        heroButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            agendarWhatsApp();
-        });
-    }
+    const btn = document.querySelector('.hero-buttons .btn:first-child');
+    if (btn) btn.onclick = (e) => { e.preventDefault(); agendarWhatsApp(); };
     
     if (isLoggedIn) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
-        renderAdminTables();
     }
 });
 
-window.onclick = function(event) {
-    const modal = document.getElementById('modal');
-    if (event.target == modal) {
-        closeModal();
-    }
-}
+window.onclick = (e) => {
+    if (e.target === document.getElementById('modal')) closeModal();
+};

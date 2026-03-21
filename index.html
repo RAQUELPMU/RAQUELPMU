@@ -212,7 +212,7 @@
                 <button class="btn" onclick="openServiceModal()">+ Novo Serviço</button>
                 <table class="admin-table">
                     <thead>
-                        <tr>
+                        32
                             <th>Nome</th>
                             <th>Preço</th>
                             <th>Duração</th>
@@ -283,9 +283,28 @@
         </div>
     </footer>
 
-    <!-- ===== FIREBASE CONFIG ===== -->
-    <script type="module" src="firebase-config.js"></script>
-    
+    <!-- FIREBASE DIRETAMENTE AQUI (sem arquivo externo) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZdLxppl2HXTtw2cgdFFFcDIFH5yx9vDY",
+            authDomain: "raquelpmu1.firebaseapp.com",
+            projectId: "raquelpmu1",
+            storageBucket: "raquelpmu1.firebasestorage.app",
+            messagingSenderId: "81115737255",
+            appId: "1:81115737255:web:2b292d0b3f8eb1c5263f82",
+            measurementId: "G-E6Q62NNQCR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        console.log('🔥 Firebase conectado!');
+        window.db = db;
+    </script>
+
     <script src="script.js"></script>
 </body>
 </html>

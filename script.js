@@ -14,7 +14,7 @@ let services = [
         name: 'Pedicure',
         price: 40,
         duration: 45,
-        image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=500'
+        image: 'https://image2url.com/r2/default/images/1774123448098-8d7a1384-5243-4780-ada4-ea751d9906b7.jpeg'
     },
     {
         id: 3,

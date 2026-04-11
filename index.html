@@ -283,10 +283,18 @@
         </div>
     </footer>
 
-    <!-- ===== FIREBASE ADICIONADO AQUI ===== -->
+    <!-- ===== FIREBASE V12 (NOVO) – ADICIONADO SEM MEXER NO RESTO ===== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            doc, 
+            updateDoc, 
+            deleteDoc 
+        } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDZdLxppl2HXTtw2cgdFFFcDIFH5yx9vDY",
@@ -301,8 +309,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        console.log('🔥 Firebase conectado!');
+        // Torna as funções disponíveis globalmente
         window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+
+        console.log('🔥 Firebase v12 conectado!');
     </script>
 
     <script src="script.js"></script>

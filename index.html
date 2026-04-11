@@ -235,7 +235,7 @@
                         </tr>
                     </thead>
                     <tbody id="professionals-admin-list"></tbody>
-                </table>
+                <tr>
             </div>
         </div>
     </section>
@@ -283,19 +283,11 @@
         </div>
     </footer>
 
-    <!-- ===== FIREBASE V12 (NOVO) – ADICIONADO SEM MEXER NO RESTO ===== -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            getDocs, 
-            doc, 
-            updateDoc, 
-            deleteDoc 
-        } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    <!-- ===== FIREBASE VERSÃO 8 (COMPATÍVEL COM db.collection) ===== -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDZdLxppl2HXTtw2cgdFFFcDIFH5yx9vDY",
             authDomain: "raquelpmu1.firebaseapp.com",
@@ -306,19 +298,11 @@
             measurementId: "G-E6Q62NNQCR"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Torna as funções disponíveis globalmente
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
         window.db = db;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.getDocs = getDocs;
-        window.doc = doc;
-        window.updateDoc = updateDoc;
-        window.deleteDoc = deleteDoc;
 
-        console.log('🔥 Firebase v12 conectado!');
+        console.log('🔥 Firebase v8 conectado!');
     </script>
 
     <script src="script.js"></script>

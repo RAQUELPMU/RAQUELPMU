@@ -1,61 +1,92 @@
-// ===== DADOS DO SEU SALÃO =====
-// Tudo salvo aqui mesmo, sem Firebase, sem JSON, sem complicação!
+// ===== DADOS DO SEU SALÃO COM FIREBASE =====
 
-let services = [
-    {
-        id: 1,
-        name: 'Manicure',
-        price: 35,
-        duration: 45,
-        image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500'
-    },
-    {
-        id: 2,
-        name: 'Pedicure',
-        price: 40,
-        duration: 45,
-        image: 'https://image2url.com/r2/default/images/1774123867804-312b158d-6a9e-44a9-bf26-8d77c0b02870.jpeg'
-    },
-    {
-        id: 3,
-        name: 'Design de Sobrancelhas',
-        price: 50,
-        duration: 30,
-        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600811/boco4k7hfxuyzcwmfpog.jpg',
-    },
-    {
-        id: 4,
-        name: 'Micropigmentação de Sobrancelhas',
-        price: 450,
-        duration: 120,
-        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773615529/g6fk0xn7lbsawlqtpey6.jpg',
-    }
-];
-
-let professionals = [
-    {
-        id: 1,
-        name: 'Raquel Sobreira',
-        specialty: 'Unhas e Sobrancelha',
-        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600488/lyrh3xheum9kd9cqtjk4.png'
-    },
-    {
-        id: 2,
-        name: 'Glauce Costa',
-        specialty: 'Podóloga',
-        image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600024/wdf4gnrwo9hdhz6c7ocv.png'
-    }
-];
-
+let services = [];
+let professionals = [];
 let appointments = [];
 let ADMIN_PASSWORD = "247126Ca";
 let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
 const WHATSAPP_NUMBER = "5521992649522";
 
+// ===== VERIFICA SE FIREBASE ESTÁ CONECTADO =====
+function verificarFirebase() {
+    if (typeof db === 'undefined') {
+        alert('❌ Firebase não conectado! Verifique se o código do Firebase está no index.html');
+        return false;
+    }
+    return true;
+}
+
+// ===== CARREGAR DADOS DO FIREBASE =====
+async function carregarDados() {
+    if (!verificarFirebase()) return;
+    
+    try {
+        console.log('🔄 Carregando dados do Firebase...');
+        
+        // Buscar profissionais
+        const profSnap = await db.collection('professionals').get();
+        if (!profSnap.empty) {
+            professionals = profSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
+        
+        // Buscar serviços
+        const servSnap = await db.collection('services').get();
+        if (!servSnap.empty) {
+            services = servSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
+        
+        // Se não tiver dados, criar os iniciais
+        if (services.length === 0 && professionals.length === 0) {
+            await criarDadosIniciais();
+        }
+        
+        renderServices();
+        renderProfessionals();
+        if (isLoggedIn) renderAdminTables();
+        
+    } catch (erro) {
+        console.error('❌ Erro:', erro);
+        alert('Erro ao carregar dados: ' + erro.message);
+    }
+}
+
+// ===== DADOS INICIAIS =====
+async function criarDadosIniciais() {
+    if (!verificarFirebase()) return;
+    
+    try {
+        const servicosIniciais = [
+            { name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500' },
+            { name: 'Pedicure', price: 40, duration: 45, image: 'https://image2url.com/r2/default/images/1774123867804-312b158d-6a9e-44a9-bf26-8d77c0b02870.jpeg' },
+            { name: 'Design de Sobrancelhas', price: 50, duration: 30, image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600811/boco4k7hfxuyzcwmfpog.jpg' },
+            { name: 'Micropigmentação de Sobrancelhas', price: 450, duration: 120, image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773615529/g6fk0xn7lbsawlqtpey6.jpg' }
+        ];
+        
+        const profissionaisIniciais = [
+            { name: 'Raquel Sobreira', specialty: 'Unhas e Sobrancelha', image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600488/lyrh3xheum9kd9cqtjk4.png' },
+            { name: 'Glauce Costa', specialty: 'Podóloga', image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600024/wdf4gnrwo9hdhz6c7ocv.png' }
+        ];
+        
+        for (const s of servicosIniciais) await db.collection('services').add(s);
+        for (const p of profissionaisIniciais) await db.collection('professionals').add(p);
+        
+        alert('✅ Dados iniciais criados!');
+        
+    } catch (erro) {
+        console.error('❌ Erro:', erro);
+        alert('Erro ao criar dados: ' + erro.message);
+    }
+}
+
 // ===== FUNÇÕES DE RENDERIZAÇÃO =====
 function renderServices() {
     const container = document.getElementById('services-list');
     if (!container) return;
+    
+    if (!services || services.length === 0) {
+        container.innerHTML = '<p style="text-align: center;">Carregando serviços...</p>';
+        return;
+    }
     
     container.innerHTML = services.map(service => {
         const mensagem = `Olá! Gostaria de agendar ${service.name}.`;
@@ -81,6 +112,11 @@ function renderProfessionals() {
     const container = document.getElementById('professionals-list');
     if (!container) return;
     
+    if (!professionals || professionals.length === 0) {
+        container.innerHTML = '<p style="text-align: center;">Carregando profissionais...</p>';
+        return;
+    }
+    
     container.innerHTML = professionals.map(prof => {
         return `
             <div class="professional-card">
@@ -101,48 +137,60 @@ function agendarWhatsApp() {
 function renderAdminTables() {
     const appointmentsList = document.getElementById('appointments-list');
     if (appointmentsList) {
-        appointmentsList.innerHTML = appointments.map(apt => `
-            <tr>
-                <td>${apt.client}</td>
-                <td>${apt.service}</td>
-                <td>${apt.professional}</td>
-                <td>${apt.date} ${apt.time}</td>
-                <td><span class="status-badge status-${apt.status}">${apt.status === 'confirmed' ? 'Confirmado' : 'Pendente'}</span></td>
-                <td>
-                    <button class="edit-btn" onclick="editAppointment(${apt.id})">Editar</button>
-                    <button class="delete-btn" onclick="deleteAppointment(${apt.id})">Excluir</button>
-                </td>
-            </tr>
-        `).join('');
+        if (!appointments || appointments.length === 0) {
+            appointmentsList.innerHTML = '<tr><td colspan="6">Nenhum agendamento</td</tr>';
+        } else {
+            appointmentsList.innerHTML = appointments.map(apt => `
+                <tr>
+                    <td>${apt.client}</td>
+                    <td>${apt.service}</td>
+                    <td>${apt.professional}</td>
+                    <td>${apt.date} ${apt.time}</td>
+                    <td><span class="status-badge status-${apt.status}">${apt.status === 'confirmed' ? 'Confirmado' : 'Pendente'}</span></td>
+                    <td>
+                        <button class="edit-btn" onclick="editAppointment(${apt.id})">Editar</button>
+                        <button class="delete-btn" onclick="deleteAppointment(${apt.id})">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
     }
 
     const servicesAdminList = document.getElementById('services-admin-list');
     if (servicesAdminList) {
-        servicesAdminList.innerHTML = services.map(service => `
-            <tr>
-                <td>${service.name}</td>
-                <td>R$ ${service.price}</td>
-                <td>${service.duration} min</td>
-                <td>
-                    <button class="edit-btn" onclick="editService(${service.id})">Editar</button>
-                    <button class="delete-btn" onclick="deleteService(${service.id})">Excluir</button>
-                </td>
-            </tr>
-        `).join('');
+        if (!services || services.length === 0) {
+            servicesAdminList.innerHTML = '<tr><td colspan="4">Nenhum serviço</td</tr>';
+        } else {
+            servicesAdminList.innerHTML = services.map(service => `
+                <tr>
+                    <td>${service.name}</td>
+                    <td>R$ ${service.price}</td>
+                    <td>${service.duration} min</td>
+                    <td>
+                        <button class="edit-btn" onclick="editService('${service.id}')">Editar</button>
+                        <button class="delete-btn" onclick="deleteService('${service.id}')">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
     }
 
     const professionalsAdminList = document.getElementById('professionals-admin-list');
     if (professionalsAdminList) {
-        professionalsAdminList.innerHTML = professionals.map(prof => `
-            <tr>
-                <td>${prof.name}</td>
-                <td>${prof.specialty}</td>
-                <td>
-                    <button class="edit-btn" onclick="editProfessional(${prof.id})">Editar</button>
-                    <button class="delete-btn" onclick="deleteProfessional(${prof.id})">Excluir</button>
-                </td>
-            </tr>
-        `).join('');
+        if (!professionals || professionals.length === 0) {
+            professionalsAdminList.innerHTML = '<tr><td colspan="3">Nenhum profissional</td</tr>';
+        } else {
+            professionalsAdminList.innerHTML = professionals.map(prof => `
+                <tr>
+                    <td>${prof.name}</td>
+                    <td>${prof.specialty}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editProfessional('${prof.id}')">Editar</button>
+                        <button class="delete-btn" onclick="deleteProfessional('${prof.id}')">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
     }
 }
 
@@ -183,7 +231,7 @@ function checkAdminAuth() {
     return true;
 }
 
-// ===== CRUD SERVIÇOS =====
+// ===== CRUD SERVIÇOS (COM FIREBASE) =====
 function openServiceModal(service = null) {
     if (!checkAdminAuth()) return;
     
@@ -191,7 +239,7 @@ function openServiceModal(service = null) {
     const modalBody = document.getElementById('modal-body');
     
     modalBody.innerHTML = `
-        <form onsubmit="saveService(event, ${service ? service.id : 'null'})">
+        <form onsubmit="saveService(event, ${service ? `'${service.id}'` : 'null'})">
             <div class="form-group">
                 <label>Nome do serviço</label>
                 <input type="text" id="service-name" value="${service ? service.name : ''}" required>
@@ -216,8 +264,9 @@ function openServiceModal(service = null) {
     modal.classList.add('active');
 }
 
-function saveService(event, id) {
+async function saveService(event, id) {
     event.preventDefault();
+    if (!checkAdminAuth() || !verificarFirebase()) return;
     
     const serviceData = {
         name: document.getElementById('service-name').value,
@@ -226,31 +275,35 @@ function saveService(event, id) {
         image: document.getElementById('service-image').value || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500'
     };
     
-    if (id && id !== 'null') {
-        const index = services.findIndex(s => s.id == id);
-        services[index] = { ...services[index], ...serviceData };
-    } else {
-        serviceData.id = services.length + 1;
-        services.push(serviceData);
+    try {
+        if (id && id !== 'null') {
+            await db.collection('services').doc(id).update(serviceData);
+            alert('✅ Serviço atualizado!');
+        } else {
+            await db.collection('services').add(serviceData);
+            alert('✅ Serviço criado!');
+        }
+        await carregarDados();
+        closeModal();
+    } catch (erro) {
+        alert('❌ Erro: ' + erro.message);
     }
-    
-    renderServices();
-    renderAdminTables();
-    closeModal();
-    alert('✅ Serviço salvo com sucesso!');
 }
 
-function deleteService(id) {
-    if (!checkAdminAuth()) return;
+async function deleteService(id) {
+    if (!checkAdminAuth() || !verificarFirebase()) return;
     if (confirm('Tem certeza que deseja excluir este serviço?')) {
-        services = services.filter(s => s.id != id);
-        renderServices();
-        renderAdminTables();
-        alert('✅ Serviço excluído com sucesso!');
+        try {
+            await db.collection('services').doc(id).delete();
+            alert('✅ Serviço excluído!');
+            await carregarDados();
+        } catch (erro) {
+            alert('❌ Erro: ' + erro.message);
+        }
     }
 }
 
-// ===== CRUD PROFISSIONAIS =====
+// ===== CRUD PROFISSIONAIS (COM FIREBASE) =====
 function openProfessionalModal(professional = null) {
     if (!checkAdminAuth()) return;
     
@@ -258,7 +311,7 @@ function openProfessionalModal(professional = null) {
     const modalBody = document.getElementById('modal-body');
     
     modalBody.innerHTML = `
-        <form onsubmit="saveProfessional(event, ${professional ? professional.id : 'null'})">
+        <form onsubmit="saveProfessional(event, ${professional ? `'${professional.id}'` : 'null'})">
             <div class="form-group">
                 <label>Nome do profissional</label>
                 <input type="text" id="professional-name" value="${professional ? professional.name : ''}" required>
@@ -279,8 +332,9 @@ function openProfessionalModal(professional = null) {
     modal.classList.add('active');
 }
 
-function saveProfessional(event, id) {
+async function saveProfessional(event, id) {
     event.preventDefault();
+    if (!checkAdminAuth() || !verificarFirebase()) return;
     
     const professionalData = {
         name: document.getElementById('professional-name').value,
@@ -288,27 +342,31 @@ function saveProfessional(event, id) {
         image: document.getElementById('professional-image').value
     };
     
-    if (id && id !== 'null') {
-        const index = professionals.findIndex(p => p.id == id);
-        professionals[index] = { ...professionals[index], ...professionalData };
-    } else {
-        professionalData.id = professionals.length + 1;
-        professionals.push(professionalData);
+    try {
+        if (id && id !== 'null') {
+            await db.collection('professionals').doc(id).update(professionalData);
+            alert('✅ Profissional atualizado!');
+        } else {
+            await db.collection('professionals').add(professionalData);
+            alert('✅ Profissional criado!');
+        }
+        await carregarDados();
+        closeModal();
+    } catch (erro) {
+        alert('❌ Erro: ' + erro.message);
     }
-    
-    renderProfessionals();
-    renderAdminTables();
-    closeModal();
-    alert('✅ Profissional salvo com sucesso!');
 }
 
-function deleteProfessional(id) {
-    if (!checkAdminAuth()) return;
+async function deleteProfessional(id) {
+    if (!checkAdminAuth() || !verificarFirebase()) return;
     if (confirm('Tem certeza que deseja excluir este profissional?')) {
-        professionals = professionals.filter(p => p.id != id);
-        renderProfessionals();
-        renderAdminTables();
-        alert('✅ Profissional excluído com sucesso!');
+        try {
+            await db.collection('professionals').doc(id).delete();
+            alert('✅ Profissional excluído!');
+            await carregarDados();
+        } catch (erro) {
+            alert('❌ Erro: ' + erro.message);
+        }
     }
 }
 
@@ -345,8 +403,7 @@ function closeModal() {
 
 // ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', function() {
-    renderServices();
-    renderProfessionals();
+    carregarDados();
     
     const heroButton = document.querySelector('.hero-buttons .btn:first-child');
     if (heroButton) {

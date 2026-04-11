@@ -1,4 +1,6 @@
-// ===== DADOS DO SEU SALÃO COM FIREBASE =====
+// ===== FIREBASE V9+ (NOVO) =====
+// Importa as funções do Firebase (já vêm do index.html)
+// As funções já estão disponíveis via window
 
 let services = [];
 let professionals = [];
@@ -7,35 +9,24 @@ let ADMIN_PASSWORD = "247126Ca";
 let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
 const WHATSAPP_NUMBER = "5521992649522";
 
-// ===== VERIFICA SE FIREBASE ESTÁ CONECTADO =====
-function verificarFirebase() {
-    if (typeof db === 'undefined') {
-        alert('❌ Firebase não conectado! Verifique se o código do Firebase está no index.html');
-        return false;
-    }
-    return true;
-}
-
-// ===== CARREGAR DADOS DO FIREBASE =====
+// ===== FUNÇÕES DE ACESSO AO FIRESTORE (V9+) =====
 async function carregarDados() {
-    if (!verificarFirebase()) return;
+    if (typeof db === 'undefined') {
+        alert('❌ Firebase não conectado!');
+        return;
+    }
     
     try {
-        console.log('🔄 Carregando dados do Firebase...');
+        // Buscar profissionais - sintaxe V9+
+        const profQuery = collection(db, 'professionals');
+        const profSnapshot = await getDocs(profQuery);
+        professionals = profSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
-        // Buscar profissionais
-        const profSnap = await db.collection('professionals').get();
-        if (!profSnap.empty) {
-            professionals = profSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        }
+        // Buscar serviços - sintaxe V9+
+        const servQuery = collection(db, 'services');
+        const servSnapshot = await getDocs(servQuery);
+        services = servSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
-        // Buscar serviços
-        const servSnap = await db.collection('services').get();
-        if (!servSnap.empty) {
-            services = servSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        }
-        
-        // Se não tiver dados, criar os iniciais
         if (services.length === 0 && professionals.length === 0) {
             await criarDadosIniciais();
         }
@@ -46,14 +37,11 @@ async function carregarDados() {
         
     } catch (erro) {
         console.error('❌ Erro:', erro);
-        alert('Erro ao carregar dados: ' + erro.message);
+        alert('Erro ao carregar: ' + erro.message);
     }
 }
 
-// ===== DADOS INICIAIS =====
 async function criarDadosIniciais() {
-    if (!verificarFirebase()) return;
-    
     try {
         const servicosIniciais = [
             { name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500' },
@@ -67,10 +55,20 @@ async function criarDadosIniciais() {
             { name: 'Glauce Costa', specialty: 'Podóloga', image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600024/wdf4gnrwo9hdhz6c7ocv.png' }
         ];
         
-        for (const s of servicosIniciais) await db.collection('services').add(s);
-        for (const p of profissionaisIniciais) await db.collection('professionals').add(p);
+        // Adicionar serviços - sintaxe V9+
+        const servColl = collection(db, 'services');
+        for (const s of servicosIniciais) {
+            await addDoc(servColl, s);
+        }
+        
+        // Adicionar profissionais - sintaxe V9+
+        const profColl = collection(db, 'professionals');
+        for (const p of profissionaisIniciais) {
+            await addDoc(profColl, p);
+        }
         
         alert('✅ Dados iniciais criados!');
+        await carregarDados();
         
     } catch (erro) {
         console.error('❌ Erro:', erro);
@@ -135,27 +133,6 @@ function agendarWhatsApp() {
 }
 
 function renderAdminTables() {
-    const appointmentsList = document.getElementById('appointments-list');
-    if (appointmentsList) {
-        if (!appointments || appointments.length === 0) {
-            appointmentsList.innerHTML = '<tr><td colspan="6">Nenhum agendamento</td</tr>';
-        } else {
-            appointmentsList.innerHTML = appointments.map(apt => `
-                <tr>
-                    <td>${apt.client}</td>
-                    <td>${apt.service}</td>
-                    <td>${apt.professional}</td>
-                    <td>${apt.date} ${apt.time}</td>
-                    <td><span class="status-badge status-${apt.status}">${apt.status === 'confirmed' ? 'Confirmado' : 'Pendente'}</span></td>
-                    <td>
-                        <button class="edit-btn" onclick="editAppointment(${apt.id})">Editar</button>
-                        <button class="delete-btn" onclick="deleteAppointment(${apt.id})">Excluir</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-    }
-
     const servicesAdminList = document.getElementById('services-admin-list');
     if (servicesAdminList) {
         if (!services || services.length === 0) {
@@ -231,7 +208,7 @@ function checkAdminAuth() {
     return true;
 }
 
-// ===== CRUD SERVIÇOS (COM FIREBASE) =====
+// ===== CRUD SERVIÇOS (V9+) =====
 function openServiceModal(service = null) {
     if (!checkAdminAuth()) return;
     
@@ -266,7 +243,7 @@ function openServiceModal(service = null) {
 
 async function saveService(event, id) {
     event.preventDefault();
-    if (!checkAdminAuth() || !verificarFirebase()) return;
+    if (!checkAdminAuth()) return;
     
     const serviceData = {
         name: document.getElementById('service-name').value,
@@ -277,10 +254,14 @@ async function saveService(event, id) {
     
     try {
         if (id && id !== 'null') {
-            await db.collection('services').doc(id).update(serviceData);
+            // EDITAR - sintaxe V9+
+            const docRef = doc(db, 'services', id);
+            await updateDoc(docRef, serviceData);
             alert('✅ Serviço atualizado!');
         } else {
-            await db.collection('services').add(serviceData);
+            // CRIAR - sintaxe V9+
+            const collRef = collection(db, 'services');
+            await addDoc(collRef, serviceData);
             alert('✅ Serviço criado!');
         }
         await carregarDados();
@@ -291,10 +272,12 @@ async function saveService(event, id) {
 }
 
 async function deleteService(id) {
-    if (!checkAdminAuth() || !verificarFirebase()) return;
+    if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja excluir este serviço?')) {
         try {
-            await db.collection('services').doc(id).delete();
+            // DELETAR - sintaxe V9+
+            const docRef = doc(db, 'services', id);
+            await deleteDoc(docRef);
             alert('✅ Serviço excluído!');
             await carregarDados();
         } catch (erro) {
@@ -303,7 +286,7 @@ async function deleteService(id) {
     }
 }
 
-// ===== CRUD PROFISSIONAIS (COM FIREBASE) =====
+// ===== CRUD PROFISSIONAIS (V9+) =====
 function openProfessionalModal(professional = null) {
     if (!checkAdminAuth()) return;
     
@@ -334,7 +317,7 @@ function openProfessionalModal(professional = null) {
 
 async function saveProfessional(event, id) {
     event.preventDefault();
-    if (!checkAdminAuth() || !verificarFirebase()) return;
+    if (!checkAdminAuth()) return;
     
     const professionalData = {
         name: document.getElementById('professional-name').value,
@@ -344,10 +327,14 @@ async function saveProfessional(event, id) {
     
     try {
         if (id && id !== 'null') {
-            await db.collection('professionals').doc(id).update(professionalData);
+            // EDITAR - sintaxe V9+
+            const docRef = doc(db, 'professionals', id);
+            await updateDoc(docRef, professionalData);
             alert('✅ Profissional atualizado!');
         } else {
-            await db.collection('professionals').add(professionalData);
+            // CRIAR - sintaxe V9+
+            const collRef = collection(db, 'professionals');
+            await addDoc(collRef, professionalData);
             alert('✅ Profissional criado!');
         }
         await carregarDados();
@@ -358,10 +345,12 @@ async function saveProfessional(event, id) {
 }
 
 async function deleteProfessional(id) {
-    if (!checkAdminAuth() || !verificarFirebase()) return;
+    if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja excluir este profissional?')) {
         try {
-            await db.collection('professionals').doc(id).delete();
+            // DELETAR - sintaxe V9+
+            const docRef = doc(db, 'professionals', id);
+            await deleteDoc(docRef);
             alert('✅ Profissional excluído!');
             await carregarDados();
         } catch (erro) {
@@ -370,29 +359,12 @@ async function deleteProfessional(id) {
     }
 }
 
-// ===== FUNÇÕES DE AGENDAMENTO =====
-function editAppointment(id) {
-    if (!checkAdminAuth()) return;
-    alert('Funcionalidade em desenvolvimento');
-}
-
-function deleteAppointment(id) {
-    if (!checkAdminAuth()) return;
-    if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
-        appointments = appointments.filter(a => a.id != id);
-        renderAdminTables();
-        alert('✅ Agendamento cancelado!');
-    }
-}
-
 function editService(id) {
-    if (!checkAdminAuth()) return;
     const service = services.find(s => s.id == id);
     openServiceModal(service);
 }
 
 function editProfessional(id) {
-    if (!checkAdminAuth()) return;
     const professional = professionals.find(p => p.id == id);
     openProfessionalModal(professional);
 }

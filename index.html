@@ -283,6 +283,43 @@
         </div>
     </footer>
 
+    <!-- ===== FIREBASE V12.12.0 (NOVA VERSÃO) ===== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            doc, 
+            updateDoc, 
+            deleteDoc 
+        } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+    apiKey: "AIzaSyBeBzPgxruD_viBp9gYdl6tjBpP1FpY95o",
+    authDomain: "raquelpmu22.firebaseapp.com",
+    projectId: "raquelpmu22",
+    storageBucket: "raquelpmu22.firebasestorage.app",
+    messagingSenderId: "465108642995",
+    appId: "1:465108642995:web:647d0e01f0a43b284854c6"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Torna disponível globalmente para o script.js
+        window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+
+        console.log('🔥 Firebase v12.12.0 conectado!');
+    </script>
+
     <script src="script.js"></script>
 </body>
-                                                     </html>
+</html>

@@ -371,9 +371,181 @@ function closeModal() {
     document.getElementById('modal').classList.remove('active');
 }
 
+// ===== SISTEMA DE AVALIAÇÕES =====
+
+let avaliacoes = [];
+
+// Carregar avaliações do Firebase
+async function carregarAvaliacoes() {
+    try {
+        const avaliacoesQuery = collection(db, 'avaliacoes');
+        const avaliacoesSnapshot = await getDocs(avaliacoesQuery);
+        avaliacoes = avaliacoesSnapshot.docs.map(doc => ({ 
+            id: doc.id, 
+            ...doc.data(),
+            data: doc.data().data || new Date().toISOString()
+        }));
+        
+        // Ordenar por data (mais recentes primeiro)
+        avaliacoes.sort((a, b) => new Date(b.data) - new Date(a.data));
+        
+        renderAvaliacoes();
+    } catch (erro) {
+        console.error('Erro ao carregar avaliações:', erro);
+    }
+}
+
+// Renderizar lista de avaliações
+function renderAvaliacoes() {
+    const container = document.getElementById('lista-avaliacoes');
+    if (!container) return;
+    
+    if (avaliacoes.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999;">Seja o primeiro a avaliar! 🌟</p>';
+        return;
+    }
+    
+    container.innerHTML = avaliacoes.map(avaliacao => `
+        <div class="avaliacao-item">
+            <div class="avaliacao-nome">${avaliacao.nome || 'Cliente anônimo'}</div>
+            <div class="avaliacao-estrelas-item">
+                ${'★'.repeat(avaliacao.nota)}${'☆'.repeat(5 - avaliacao.nota)}
+            </div>
+            <div class="avaliacao-comentario">${avaliacao.comentario || 'Sem comentários'}</div>
+            <div class="avaliacao-data">${formatarData(avaliacao.data)}</div>
+        </div>
+    `).join('');
+}
+
+// Formatar data
+function formatarData(dataISO) {
+    const data = new Date(dataISO);
+    return data.toLocaleDateString('pt-BR') + ' ' + data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+// Sistema de estrelas
+function initEstrelas() {
+    const estrelas = document.querySelectorAll('#estrelas i');
+    let notaSelecionada = 0;
+    
+    estrelas.forEach(estrela => {
+        estrela.addEventListener('mouseenter', function() {
+            const nota = parseInt(this.getAttribute('data-nota'));
+            atualizarEstrelasTemporario(nota);
+        });
+        
+        estrela.addEventListener('mouseleave', function() {
+            atualizarEstrelasTemporario(notaSelecionada);
+        });
+        
+        estrela.addEventListener('click', function() {
+            notaSelecionada = parseInt(this.getAttribute('data-nota'));
+            atualizarEstrelasTemporario(notaSelecionada);
+            // Marcar como permanente
+            estrelas.forEach((e, i) => {
+                if (i < notaSelecionada) {
+                    e.classList.add('permanente');
+                    e.classList.remove('far');
+                    e.classList.add('fas');
+                } else {
+                    e.classList.remove('permanente');
+                    e.classList.remove('fas');
+                    e.classList.add('far');
+                }
+            });
+        });
+    });
+    
+    function atualizarEstrelasTemporario(nota) {
+        estrelas.forEach((estrela, index) => {
+            if (index < nota) {
+                estrela.classList.remove('far');
+                estrela.classList.add('fas');
+                estrela.style.color = '#ffc107';
+            } else {
+                if (!estrela.classList.contains('permanente')) {
+                    estrela.classList.remove('fas');
+                    estrela.classList.add('far');
+                    estrela.style.color = '#ddd';
+                }
+            }
+        });
+    }
+}
+
+// Enviar avaliação
+async function enviarAvaliacao() {
+    const estrelas = document.querySelectorAll('#estrelas i');
+    let nota = 0;
+    for (let i = 0; i < estrelas.length; i++) {
+        if (estrelas[i].classList.contains('permanente') || estrelas[i].classList.contains('fas')) {
+            nota++;
+        } else {
+            break;
+        }
+    }
+    
+    const nome = document.getElementById('avaliacao-nome').value.trim();
+    const comentario = document.getElementById('avaliacao-comentario').value.trim();
+    
+    if (nota === 0) {
+        alert('Selecione uma nota antes de enviar!');
+        return;
+    }
+    
+    if (comentario === '') {
+        alert('Escreva um comentário sobre sua experiência!');
+        return;
+    }
+    
+    try {
+        const avaliacaoData = {
+            nota: nota,
+            nome: nome || null,
+            comentario: comentario,
+            data: new Date().toISOString()
+        };
+        
+        const avaliacoesColl = collection(db, 'avaliacoes');
+        await addDoc(avaliacoesColl, avaliacaoData);
+        
+        alert('✅ Obrigado pela sua avaliação!');
+        
+        // Limpar formulário
+        document.getElementById('avaliacao-nome').value = '';
+        document.getElementById('avaliacao-comentario').value = '';
+        
+        // Resetar estrelas
+        const estrelasReset = document.querySelectorAll('#estrelas i');
+        estrelasReset.forEach(estrela => {
+            estrela.classList.remove('permanente', 'fas');
+            estrela.classList.add('far');
+            estrela.style.color = '#ddd';
+        });
+        
+        // Recarregar avaliações
+        await carregarAvaliacoes();
+        
+    } catch (erro) {
+        console.error('Erro ao enviar avaliação:', erro);
+        alert('❌ Erro ao enviar. Tente novamente.');
+    }
+}
+
+// Inicializar sistema de avaliação
+function initAvaliacoes() {
+    const btnEnviar = document.getElementById('btn-enviar-avaliacao');
+    if (btnEnviar) {
+        btnEnviar.addEventListener('click', enviarAvaliacao);
+    }
+    initEstrelas();
+    carregarAvaliacoes();
+}
+
 // ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', function() {
     carregarDados();
+    initAvaliacoes(); // Inicializa o sistema de avaliações
     
     const heroButton = document.querySelector('.hero-buttons .btn:first-child');
     if (heroButton) {

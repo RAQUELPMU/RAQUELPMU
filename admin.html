@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Beleza & Estilo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Beleza & Estilo - Admin</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Voltar ao site</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="admin">
+        <h2 class="section-title">Área Administrativa</h2>
+        
+        <div id="login-screen" class="login-container">
+            <div class="login-box">
+                <h3>Acesso Restrito</h3>
+                <p>Digite a senha para gerenciar o salão</p>
+                <div class="form-group">
+                    <input type="password" id="admin-password" placeholder="Digite a senha" class="login-input">
+                    <button onclick="checkPassword()" class="btn login-btn">Entrar</button>
+                </div>
+                <p id="login-error" class="error-message" style="display: none;">Senha incorreta!</p>
+            </div>
+        </div>
+        
+        <div id="admin-panel" class="admin-panel" style="display: none;">
+            <div class="admin-header">
+                <h3>Bem-vindo, Administrador!</h3>
+                <button onclick="logout()" class="btn logout-btn">Sair</button>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="showTab('agendamentos')">Agendamentos</button>
+                <button class="tab-btn" onclick="showTab('servicos-admin')">Serviços</button>
+                <button class="tab-btn" onclick="showTab('profissionais-admin')">Profissionais</button>
+            </div>
+            
+            <div id="agendamentos" class="tab-content active">
+                <h3>Agendamentos</h3>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Serviço</th>
+                            <th>Profissional</th>
+                            <th>Data/Hora</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointments-list"></tbody>
+                </table>
+            </div>
+            
+            <div id="servicos-admin" class="tab-content" style="display: none;">
+                <h3>Gerenciar Serviços</h3>
+                <button class="btn" onclick="openServiceModal()">+ Novo Serviço</button>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Duração</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="services-admin-list"></tbody>
+                </table>
+            </div>
+            
+            <div id="profissionais-admin" class="tab-content" style="display: none;">
+                <h3>Gerenciar Profissionais</h3>
+                <button class="btn" onclick="openProfessionalModal()">+ Novo Profissional</button>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Especialidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="professionals-admin-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Editar</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- ===== FIREBASE V12.12.0 ===== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            doc, 
+            updateDoc, 
+            deleteDoc 
+        } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBeBzPgxruD_viBp9gYdl6tjBpP1FpY95o",
+            authDomain: "raquelpmu22.firebaseapp.com",
+            projectId: "raquelpmu22",
+            storageBucket: "raquelpmu22.firebasestorage.app",
+            messagingSenderId: "465108642995",
+            appId: "1:465108642995:web:647d0e01f0a43b284854c6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+
+        console.log('🔥 Firebase v12.12.0 conectado!');
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>

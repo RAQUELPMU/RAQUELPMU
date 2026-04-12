@@ -250,6 +250,38 @@
         </div>
     </div>
 
+    <!-- ===== SEÇÃO DE AVALIAÇÕES ===== -->
+    <section id="avaliacoes">
+        <h2 class="section-title">Avalie nosso atendimento</h2>
+        <div class="avaliacao-container">
+            <div class="avaliacao-card">
+                <div class="avaliacao-estrelas" id="estrelas">
+                    <i class="far fa-star" data-nota="1"></i>
+                    <i class="far fa-star" data-nota="2"></i>
+                    <i class="far fa-star" data-nota="3"></i>
+                    <i class="far fa-star" data-nota="4"></i>
+                    <i class="far fa-star" data-nota="5"></i>
+                </div>
+                <div class="form-group">
+                    <label>Seu nome (opcional)</label>
+                    <input type="text" id="avaliacao-nome" placeholder="Como você se chama?">
+                </div>
+                <div class="form-group">
+                    <label>Seu comentário</label>
+                    <textarea id="avaliacao-comentario" rows="3" placeholder="Conte como foi sua experiência..."></textarea>
+                </div>
+                <button id="btn-enviar-avaliacao" class="btn">Enviar avaliação</button>
+            </div>
+            
+            <div class="avaliacoes-lista">
+                <h3>Últimas avaliações</h3>
+                <div id="lista-avaliacoes">
+                    <p style="text-align: center; color: #999;">Carregando avaliações...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -297,13 +329,13 @@
         } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
-    apiKey: "AIzaSyBeBzPgxruD_viBp9gYdl6tjBpP1FpY95o",
-    authDomain: "raquelpmu22.firebaseapp.com",
-    projectId: "raquelpmu22",
-    storageBucket: "raquelpmu22.firebasestorage.app",
-    messagingSenderId: "465108642995",
-    appId: "1:465108642995:web:647d0e01f0a43b284854c6"
-};
+            apiKey: "AIzaSyBeBzPgxruD_viBp9gYdl6tjBpP1FpY95o",
+            authDomain: "raquelpmu22.firebaseapp.com",
+            projectId: "raquelpmu22",
+            storageBucket: "raquelpmu22.firebasestorage.app",
+            messagingSenderId: "465108642995",
+            appId: "1:465108642995:web:647d0e01f0a43b284854c6"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);

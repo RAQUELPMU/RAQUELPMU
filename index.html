@@ -3,9 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beleza & Estilo | Salão de Beleza - Ilha do Governador</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Beleza & Estilo | Salão de Beleza</title>
+    <style>
+        /* Reset e estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Header e Navegação */
+        header {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin-top: 70px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #ff6b6b;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Seções */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: #ff6b6b;
+            margin: 1rem auto;
+        }
+
+        /* Serviços */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .service-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .service-content {
+            padding: 1.5rem;
+        }
+
+        .service-content h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .service-price {
+            color: #ff6b6b;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        /* Agendamento */
+        .appointment-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 3rem;
+            color: white;
+        }
+
+        .appointment-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        /* Profissionais */
+        .professionals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .professional-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .professional-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            margin: 0 auto 1rem;
+            border: 3px solid #ff6b6b;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 1rem;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .admin-table th {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .edit-btn {
+            padding: 0.25rem 0.75rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .delete-btn {
+            padding: 0.25rem 0.75rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -15,24 +396,17 @@
                 <li><a href="#home">Home</a></li>
                 <li><a href="#servicos">Serviços</a></li>
                 <li><a href="#profissionais">Profissionais</a></li>
-                <li><a href="#localizacao">Localização</a></li>
+                <li><a href="#agendamento">Agendar</a></li>
+                <li><a href="#admin">Admin</a></li>
             </ul>
         </nav>
     </header>
 
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1>Beleza & Estilo na Ilha do Governador</h1>
-            <p class="hero-address">
-                <i class="fas fa-map-pin"></i> Rua Jaime Perdigão, 353 - Ilha do Governador - CEP: 21920-240
-            </p>
+            <h1>Realce sua beleza com nossos profissionais</h1>
             <p>Agende já seu horário e descubra o poder da transformação</p>
-            <div class="hero-buttons">
-                <a href="#" onclick="agendarWhatsApp(); return false;" class="btn">
-                    <i class="fab fa-whatsapp"></i> Agendar Agora
-                </a>
-                <a href="#localizacao" class="btn btn-outline">Como Chegar</a>
-            </div>
+            <a href="#agendamento" class="btn">Agendar Agora</a>
         </div>
     </section>
 
@@ -46,223 +420,438 @@
         <div class="professionals-grid" id="professionals-list"></div>
     </section>
 
-    <section id="localizacao">
-        <h2 class="section-title">Como Chegar</h2>
-        <div class="location-container">
-            <div class="location-info">
-                <div class="info-card">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <h3>Endereço</h3>
-                    <p>Rua Jaime Perdigão, 353</p>
-                    <p>Ilha do Governador</p>
-                    <p>Rio de Janeiro - RJ</p>
-                    <p>CEP: 21920-240</p>
-                    <a href="https://www.google.com/maps/dir//Rua+Jaime+Perdigão,+353+-+Freguesia+(Ilha+do+Governador),+Rio+de+Janeiro+-+RJ,+21920-240" 
-                       target="_blank" 
-                       class="btn btn-small" 
-                       style="margin-top: 1rem;">
-                        <i class="fas fa-directions"></i> Abrir no Maps
-                    </a>
+    <section id="agendamento">
+        <h2 class="section-title">Agendamento Online</h2>
+        <div class="appointment-container">
+            <form id="appointment-form" class="appointment-form">
+                <div class="form-group">
+                    <label for="nome">Nome completo *</label>
+                    <input type="text" id="nome" required>
                 </div>
                 
-                <div class="info-card">
-                    <i class="fas fa-clock"></i>
-                    <h3>Horário</h3>
-                    <p>⏰ Segunda a Sexta: 9h às 20h</p>
-                    <p>⏰ Sábado: 9h às 18h</p>
-                    <p>🚫 Domingo: Fechado</p>
+                <div class="form-group">
+                    <label for="email">E-mail *</label>
+                    <input type="email" id="email" required>
                 </div>
                 
-                <div class="info-card">
-                    <i class="fas fa-phone-alt"></i>
-                    <h3>Contato</h3>
-                    <p>📞 Tel: (21) em desenvolvimento</p>
-                    <p>📱 WhatsApp: (21) 99264-9522</p>
-                    <a href="https://wa.me/5521992649522" target="_blank" class="btn btn-small" style="margin-top: 1rem;">
-                        <i class="fab fa-whatsapp"></i> Chamar no WhatsApp
-                    </a>
+                <div class="form-group">
+                    <label for="telefone">Telefone *</label>
+                    <input type="tel" id="telefone" required>
                 </div>
                 
-                <div class="info-card">
-                    <i class="fas fa-bus"></i>
-                    <h3>🚌 Como Chegar de Ônibus</h3>
-                    <p><strong>Linhas que passam:</strong></p>
-                    <p>• 321 - Terminal Gentileza × Ilha</p>
-                    <p>• 322 - Candelária × Ilha</p>
-                    <p>• 323 - Castelo × Ilha</p>
-                    <p>• 324 - Bonsucesso × Ilha</p>
-                    <p>• 325 - Saens Pena × Ilha</p>
-                    <p><strong>Ponto:</strong> Em frente ao salão</p>
+                <div class="form-group">
+                    <label for="servico">Serviço *</label>
+                    <select id="servico" required>
+                        <option value="">Selecione um serviço</option>
+                    </select>
                 </div>
                 
-                <div class="info-card">
-                    <i class="fas fa-ship"></i>
-                    <h3>⛴️ Como Chegar de Barca</h3>
-                    <p><strong>Trajeto:</strong> Praça XV → Ilha do Governador</p>
-                    <p><strong>Tempo de travessia:</strong> 20 minutos</p>
-                    <p><strong>Da estação das barcas:</strong></p>
-                    <p>• Ônibus 321, 322 ou 323</p>
-                    <p>• 10 minutos até o salão</p>
-                    <p><strong>Frequência:</strong> A cada 30 minutos</p>
+                <div class="form-group">
+                    <label for="profissional">Profissional *</label>
+                    <select id="profissional" required>
+                        <option value="">Selecione um profissional</option>
+                    </select>
                 </div>
                 
-                <div class="info-card">
-                    <i class="fas fa-car"></i>
-                    <h3>🚗 Como Chegar de Carro</h3>
-                    <p><strong>Da Zona Sul:</strong></p>
-                    <p>• Ponte Rio-Niterói → Linha Vermelha</p>
-                    <p>• Saída para Ilha do Governador</p>
-                    <p>• Siga pela Estrada do Galeão</p>
-                    <p> </p>
-                    <p><strong>Da Zona Norte:</strong></p>
-                    <p>• Linha Vermelha sentido Ilha</p>
-                    <p>• Saída para Freguesia</p>
-                    <p> </p>
-                    <p><strong>Estacionamento:</strong> Grátis no local</p>
+                <div class="form-group">
+                    <label for="data">Data *</label>
+                    <input type="date" id="data" required>
                 </div>
                 
-                <div class="info-card">
-                    <i class="fas fa-taxi"></i>
-                    <h3>🚕 Aplicativos</h3>
-                    <p><strong>Uber:</strong> Salão Beleza & Estilo</p>
-                    <p><strong>99:</strong> Rua Jaime Perdigão, 353</p>
-                    <p><strong>Ponto de táxi:</strong> Próximo ao salão</p>
-                    <p> </p>
-                    <p><strong>Preço aproximado:</strong></p>
-                    <p>• Centro: R$ 35-45</p>
-                    <p>• Barra: R$ 50-65</p>
-                    <p>• Zona Norte: R$ 25-35</p>
+                <div class="form-group">
+                    <label for="hora">Horário *</label>
+                    <input type="time" id="hora" required>
                 </div>
+                
+                <div class="form-group">
+                    <label for="observacoes">Observações</label>
+                    <textarea id="observacoes" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group" style="grid-column: 1/-1;">
+                    <button type="submit" class="btn" style="width: 100%;">Agendar</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section id="admin">
+        <h2 class="section-title">Área Administrativa</h2>
+        <div class="admin-panel">
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="showTab('agendamentos')">Agendamentos</button>
+                <button class="tab-btn" onclick="showTab('servicos-admin')">Serviços</button>
+                <button class="tab-btn" onclick="showTab('profissionais-admin')">Profissionais</button>
             </div>
             
-            <div class="map-container">
-                <h3 style="margin-bottom: 1rem;">📍 Localização no Mapa</h3>
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.5504!2d-43.279495!3d-22.805279!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997c3849b6b6b7%3A0x7b9c7d5e8f5e5e5e!2sRua%20Jaime%20Perdig%C3%A3o%2C%20353%20-%20Freguesia%20(Ilha%20do%20Governador)%2C%20Rio%20de%20Janeiro%20-%20RJ!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" 
-                    width="100%" 
-                    height="450" 
-                    style="border:0; border-radius: 15px;" 
-                    allowfullscreen="" 
-                    loading="lazy">
-                </iframe>
-                
-                <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: center;">
-                    <a href="https://www.google.com/maps/dir//Rua+Jaime+Perdigão,+353+-+Freguesia+(Ilha+do+Governador),+Rio+de+Janeiro+-+RJ,+21920-240" 
-                       target="_blank" 
-                       class="btn btn-outline">
-                        <i class="fas fa-map-signs"></i> Traçar Rota
-                    </a>
-                    <a href="https://www.google.com/maps/search/?api=1&query=Rua+Jaime+Perdigão+353+Ilha+do+Governador+RJ" 
-                       target="_blank" 
-                       class="btn btn-outline">
-                        <i class="fas fa-map-marker-alt"></i> Ver no Google Maps
-                    </a>
-                </div>
+            <div id="agendamentos" class="tab-content active">
+                <h3>Agendamentos</h3>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Serviço</th>
+                            <th>Profissional</th>
+                            <th>Data/Hora</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointments-list"></tbody>
+                </table>
+            </div>
+            
+            <div id="servicos-admin" class="tab-content" style="display: none;">
+                <h3>Gerenciar Serviços</h3>
+                <button class="btn" onclick="openServiceModal()">Novo Serviço</button>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Duração</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="services-admin-list"></tbody>
+                </table>
+            </div>
+            
+            <div id="profissionais-admin" class="tab-content" style="display: none;">
+                <h3>Gerenciar Profissionais</h3>
+                <button class="btn" onclick="openProfessionalModal()">Novo Profissional</button>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Especialidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="professionals-admin-list"></tbody>
+                </table>
             </div>
         </div>
     </section>
 
-    <!-- ===== SEÇÃO DE AVALIAÇÕES ===== -->
-    <section id="avaliacoes">
-        <h2 class="section-title">Avalie nosso atendimento</h2>
-        <div class="avaliacao-container">
-            <div class="avaliacao-card">
-                <div class="avaliacao-estrelas" id="estrelas">
-                    <i class="far fa-star" data-nota="1"></i>
-                    <i class="far fa-star" data-nota="2"></i>
-                    <i class="far fa-star" data-nota="3"></i>
-                    <i class="far fa-star" data-nota="4"></i>
-                    <i class="far fa-star" data-nota="5"></i>
-                </div>
-                <div class="form-group">
-                    <label>Seu nome (opcional)</label>
-                    <input type="text" id="avaliacao-nome" placeholder="Como você se chama?">
-                </div>
-                <div class="form-group">
-                    <label>Seu comentário</label>
-                    <textarea id="avaliacao-comentario" rows="3" placeholder="Conte como foi sua experiência..."></textarea>
-                </div>
-                <button id="btn-enviar-avaliacao" class="btn">Enviar avaliação</button>
+    <!-- Modal para edição -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Editar</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
-            
-            <div class="avaliacoes-lista">
-                <h3>Últimas avaliações</h3>
-                <div id="lista-avaliacoes">
-                    <p style="text-align: center; color: #999;">Carregando avaliações...</p>
-                </div>
-            </div>
+            <div id="modal-body"></div>
         </div>
-    </section>
+    </div>
 
     <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>Beleza & Estilo</h4>
-                <p>RAQUELPMU</p>
-                <p>❤️ Desde 2010</p>
-            </div>
-            <div class="footer-section">
-                <h4>Endereço</h4>
-                <p>Rua Jaime Perdigão, 353</p>
-                <p>Ilha do Governador - RJ</p>
-                <p>CEP: 21920-240</p>
-            </div>
-            <div class="footer-section">
-                <h4>Contato</h4>
-                <p>📞 (21) em desenvolvimento</p>
-                <p>📱 (21) 99264-9522</p>
-                <a href="https://wa.me/5521992649522" target="_blank" style="color: #ff6b6b; text-decoration: none;">
-                    <i class="fab fa-whatsapp"></i> WhatsApp
-                </a>
-            </div>
-            <div class="footer-section">
-                <h4>Horário</h4>
-                <p>Seg-Sex: 9h às 20h</p>
-                <p>Sábado: 9h às 18h</p>
-                <p>Domingo: Fechado</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Beleza & Estilo - Ilha do Governador</p>
-        </div>
+        <p>&copy; 2024 Beleza & Estilo. Todos os direitos reservados.</p>
     </footer>
 
-    <!-- ===== FIREBASE V12.12.0 ===== -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            getDocs, 
-            doc, 
-            updateDoc, 
-            deleteDoc 
-        } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+    <script>
+        // Dados iniciais
+        let services = [
+            { id: 1, name: 'Corte de Cabelo', price: 50, duration: 60, image: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+            { id: 2, name: 'Coloração', price: 120, duration: 120, image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+            { id: 3, name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+            { id: 4, name: 'Pedicure', price: 40, duration: 45, image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+            { id: 5, name: 'Maquiagem', price: 80, duration: 60, image: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+            { id: 6, name: 'Escova', price: 45, duration: 60, image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' }
+        ];
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBeBzPgxruD_viBp9gYdl6tjBpP1FpY95o",
-            authDomain: "raquelpmu22.firebaseapp.com",
-            projectId: "raquelpmu22",
-            storageBucket: "raquelpmu22.firebasestorage.app",
-            messagingSenderId: "465108642995",
-            appId: "1:465108642995:web:647d0e01f0a43b284854c6"
-        };
+        let professionals = [
+            { id: 1, name: 'Ana Silva', specialty: 'Cabelos', image: 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+            { id: 2, name: 'Maria Oliveira', specialty: 'Maquiagem', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+            { id: 3, name: 'João Santos', specialty: 'Barba', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' },
+            { id: 4, name: 'Carla Souza', specialty: 'Unhas', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80' }
+        ];
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        let appointments = [
+            { id: 1, client: 'Cliente 1', service: 'Corte de Cabelo', professional: 'Ana Silva', date: '2024-01-20', time: '14:00', status: 'confirmed' },
+            { id: 2, client: 'Cliente 2', service: 'Manicure', professional: 'Carla Souza', date: '2024-01-20', time: '15:30', status: 'pending' }
+        ];
 
-        window.db = db;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.getDocs = getDocs;
-        window.doc = doc;
-        window.updateDoc = updateDoc;
-        window.deleteDoc = deleteDoc;
+        // Funções de renderização
+        function renderServices() {
+            const container = document.getElementById('services-list');
+            container.innerHTML = services.map(service => `
+                <div class="service-card">
+                    <div class="service-img" style="background-image: url('${service.image}')"></div>
+                    <div class="service-content">
+                        <h3>${service.name}</h3>
+                        <p class="service-price">R$ ${service.price}</p>
+                        <p>Duração: ${service.duration} min</p>
+                        <button class="btn" onclick="selectService(${service.id})" style="margin-top: 1rem;">Agendar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-        console.log('🔥 Firebase v12.12.0 conectado!');
+        function renderProfessionals() {
+            const container = document.getElementById('professionals-list');
+            container.innerHTML = professionals.map(prof => `
+                <div class="professional-card">
+                    <div class="professional-img" style="background-image: url('${prof.image}')"></div>
+                    <h3>${prof.name}</h3>
+                    <p>Especialidade: ${prof.specialty}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderSelects() {
+            const serviceSelect = document.getElementById('servico');
+            const professionalSelect = document.getElementById('profissional');
+            
+            serviceSelect.innerHTML = '<option value="">Selecione um serviço</option>' + 
+                services.map(s => `<option value="${s.id}">${s.name} - R$ ${s.price}</option>`).join('');
+            
+            professionalSelect.innerHTML = '<option value="">Selecione um profissional</option>' + 
+                professionals.map(p => `<option value="${p.id}">${p.name} - ${p.specialty}</option>`).join('');
+        }
+
+        function renderAdminTables() {
+            // Agendamentos
+            document.getElementById('appointments-list').innerHTML = appointments.map(apt => `
+                <tr>
+                    <td>${apt.client}</td>
+                    <td>${apt.service}</td>
+                    <td>${apt.professional}</td>
+                    <td>${apt.date} ${apt.time}</td>
+                    <td><span class="status-badge status-${apt.status}">${apt.status === 'confirmed' ? 'Confirmado' : 'Pendente'}</span></td>
+                    <td>
+                        <button class="edit-btn" onclick="editAppointment(${apt.id})">Editar</button>
+                        <button class="delete-btn" onclick="deleteAppointment(${apt.id})">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Serviços admin
+            document.getElementById('services-admin-list').innerHTML = services.map(service => `
+                <tr>
+                    <td>${service.name}</td>
+                    <td>R$ ${service.price}</td>
+                    <td>${service.duration} min</td>
+                    <td>
+                        <button class="edit-btn" onclick="editService(${service.id})">Editar</button>
+                        <button class="delete-btn" onclick="deleteService(${service.id})">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Profissionais admin
+            document.getElementById('professionals-admin-list').innerHTML = professionals.map(prof => `
+                <tr>
+                    <td>${prof.name}</td>
+                    <td>${prof.specialty}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editProfessional(${prof.id})">Editar</button>
+                        <button class="delete-btn" onclick="deleteProfessional(${prof.id})">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Funções de agendamento
+        document.getElementById('appointment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newAppointment = {
+                id: appointments.length + 1,
+                client: document.getElementById('nome').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('telefone').value,
+                service: services.find(s => s.id == document.getElementById('servico').value).name,
+                professional: professionals.find(p => p.id == document.getElementById('profissional').value).name,
+                date: document.getElementById('data').value,
+                time: document.getElementById('hora').value,
+                observations: document.getElementById('observacoes').value,
+                status: 'pending'
+            };
+            
+            appointments.push(newAppointment);
+            renderAdminTables();
+            alert('Agendamento realizado com sucesso!');
+            this.reset();
+        });
+
+        // Funções admin
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).style.display = 'block';
+            event.target.classList.add('active');
+        }
+
+        function selectService(id) {
+            document.getElementById('servico').value = id;
+            document.getElementById('agendamento').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // CRUD Services
+        function openServiceModal(service = null) {
+            const modal = document.getElementById('modal');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalBody.innerHTML = `
+                <form onsubmit="saveService(event, ${service ? service.id : 'null'})">
+                    <div class="form-group">
+                        <label>Nome do serviço</label>
+                        <input type="text" id="service-name" value="${service ? service.name : ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço</label>
+                        <input type="number" id="service-price" value="${service ? service.price : ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Duração (minutos)</label>
+                        <input type="number" id="service-duration" value="${service ? service.duration : ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>URL da imagem</label>
+                        <input type="url" id="service-image" value="${service ? service.image : ''}">
+                    </div>
+                    <button type="submit" class="btn">Salvar</button>
+                </form>
+            `;
+            
+            document.getElementById('modal-title').textContent = service ? 'Editar Serviço' : 'Novo Serviço';
+            modal.classList.add('active');
+        }
+
+        function saveService(event, id) {
+            event.preventDefault();
+            
+            const serviceData = {
+                name: document.getElementById('service-name').value,
+                price: parseFloat(document.getElementById('service-price').value),
+                duration: parseInt(document.getElementById('service-duration').value),
+                image: document.getElementById('service-image').value || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'
+            };
+            
+            if (id) {
+                const index = services.findIndex(s => s.id == id);
+                services[index] = { ...services[index], ...serviceData };
+            } else {
+                serviceData.id = services.length + 1;
+                services.push(serviceData);
+            }
+            
+            renderServices();
+            renderSelects();
+            renderAdminTables();
+            closeModal();
+        }
+
+        function deleteService(id) {
+            if (confirm('Tem certeza que deseja excluir este serviço?')) {
+                services = services.filter(s => s.id != id);
+                renderServices();
+                renderSelects();
+                renderAdminTables();
+            }
+        }
+
+        // CRUD Professionals
+        function openProfessionalModal(professional = null) {
+            const modal = document.getElementById('modal');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalBody.innerHTML = `
+                <form onsubmit="saveProfessional(event, ${professional ? professional.id : 'null'})">
+                    <div class="form-group">
+                        <label>Nome do profissional</label>
+                        <input type="text" id="professional-name" value="${professional ? professional.name : ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Especialidade</label>
+                        <input type="text" id="professional-specialty" value="${professional ? professional.specialty : ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>URL da imagem</label>
+                        <input type="url" id="professional-image" value="${professional ? professional.image : ''}">
+                    </div>
+                    <button type="submit" class="btn">Salvar</button>
+                </form>
+            `;
+            
+            document.getElementById('modal-title').textContent = professional ? 'Editar Profissional' : 'Novo Profissional';
+            modal.classList.add('active');
+        }
+
+        function saveProfessional(event, id) {
+            event.preventDefault();
+            
+            const professionalData = {
+                name: document.getElementById('professional-name').value,
+                specialty: document.getElementById('professional-specialty').value,
+                image: document.getElementById('professional-image').value || 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'
+            };
+            
+            if (id) {
+                const index = professionals.findIndex(p => p.id == id);
+                professionals[index] = { ...professionals[index], ...professionalData };
+            } else {
+                professionalData.id = professionals.length + 1;
+                professionals.push(professionalData);
+            }
+            
+            renderProfessionals();
+            renderSelects();
+            renderAdminTables();
+            closeModal();
+        }
+
+        function deleteProfessional(id) {
+            if (confirm('Tem certeza que deseja excluir este profissional?')) {
+                professionals = professionals.filter(p => p.id != id);
+                renderProfessionals();
+                renderSelects();
+                renderAdminTables();
+            }
+        }
+
+        // Appointment functions
+        function editAppointment(id) {
+            const appointment = appointments.find(a => a.id == id);
+            alert('Funcionalidade de edição em desenvolvimento para o agendamento: ' + appointment.client);
+        }
+
+        function deleteAppointment(id) {
+            if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
+                appointments = appointments.filter(a => a.id != id);
+                renderAdminTables();
+            }
+        }
+
+        function editService(id) {
+            const service = services.find(s => s.id == id);
+            openServiceModal(service);
+        }
+
+        function editProfessional(id) {
+            const professional = professionals.find(p => p.id == id);
+            openProfessionalModal(professional);
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // Inicialização
+        renderServices();
+        renderProfessionals();
+        renderSelects();
+        renderAdminTables();
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
     </script>
-
-    <script src="script.js"></script>
 </body>
 </html>

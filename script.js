@@ -1,4 +1,4 @@
-Aqui // ===== SCRIPT PRINCIPAL COM FIREBASE V12.12.0 (NOVA VERSÃO) =====
+// ===== SCRIPT PRINCIPAL COM FIREBASE V12.12.0 (NOVA VERSÃO) =====
 
 let services = [];
 let professionals = [];
@@ -567,4 +567,4 @@ window.onclick = function(event) {
     if (event.target == modal) {
         closeModal();
     }
-} So jeita o tamanho das imagens 
+}

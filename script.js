@@ -1,4 +1,4 @@
-// ===== SCRIPT PRINCIPAL COM FIREBASE V12.12.0 =====
+Aqui // ===== SCRIPT PRINCIPAL COM FIREBASE V12.12.0 (NOVA VERSÃO) =====
 
 let services = [];
 let professionals = [];
@@ -6,30 +6,6 @@ let appointments = [];
 let ADMIN_PASSWORD = "247126Ca";
 let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
 const WHATSAPP_NUMBER = "5521992649522";
-
-// ===== FUNÇÃO PARA PADRONIZAR TAMANHO DAS IMAGENS =====
-function padronizarImagem(url, width, height) {
-    if (!url) return '';
-    
-    // Se for do Unsplash
-    if (url.includes('unsplash.com')) {
-        url = url.split('?')[0];
-        return `${url}?w=${width}&h=${height}&fit=crop`;
-    }
-    
-    // Se for do Cloudinary (res.cloudinary.com)
-    if (url.includes('res.cloudinary.com')) {
-        const separator = url.includes('?') ? '&' : '?';
-        return `${url}${separator}w=${width}&h=${height}&c=fill`;
-    }
-    
-    // Se for do image2url (imagem corrompida)
-    if (url.includes('image2url.com')) {
-        return `https://placehold.co/${width}x${height}?text=Imagem+Indisponivel`;
-    }
-    
-    return url;
-}
 
 // ===== FUNÇÕES DE ACESSO AO FIRESTORE (V12) =====
 async function carregarDados() {
@@ -39,10 +15,12 @@ async function carregarDados() {
     }
     
     try {
+        // Buscar profissionais - sintaxe V12
         const profQuery = collection(db, 'professionals');
         const profSnapshot = await getDocs(profQuery);
         professionals = profSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
+        // Buscar serviços - sintaxe V12
         const servQuery = collection(db, 'services');
         const servSnapshot = await getDocs(servQuery);
         services = servSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -64,22 +42,24 @@ async function carregarDados() {
 async function criarDadosIniciais() {
     try {
         const servicosIniciais = [
-            { name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&h=400&fit=crop' },
-            { name: 'Pedicure', price: 40, duration: 45, image: 'https://images.unsplash.com/photo-1583244688026-d6c5e6b6f8a9?w=600&h=400&fit=crop' },
-            { name: 'Design de Sobrancelhas', price: 50, duration: 30, image: 'https://images.unsplash.com/photo-1570172619644-dfd8ed3e2e4c?w=600&h=400&fit=crop' },
-            { name: 'Micropigmentação de Sobrancelhas', price: 450, duration: 120, image: 'https://images.unsplash.com/photo-1595475884562-073c30d45670?w=600&h=400&fit=crop' }
+            { name: 'Manicure', price: 35, duration: 45, image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500' },
+            { name: 'Pedicure', price: 40, duration: 45, image: 'https://image2url.com/r2/default/images/1774123867804-312b158d-6a9e-44a9-bf26-8d77c0b02870.jpeg' },
+            { name: 'Design de Sobrancelhas', price: 50, duration: 30, image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600811/boco4k7hfxuyzcwmfpog.jpg' },
+            { name: 'Micropigmentação de Sobrancelhas', price: 450, duration: 120, image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773615529/g6fk0xn7lbsawlqtpey6.jpg' }
         ];
         
         const profissionaisIniciais = [
-            { name: 'Raquel Sobreira', specialty: 'Unhas e Sobrancelha', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=300&fit=crop' },
-            { name: 'Glauce Costa', specialty: 'Podóloga', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop' }
+            { name: 'Raquel Sobreira', specialty: 'Unhas e Sobrancelha', image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600488/lyrh3xheum9kd9cqtjk4.png' },
+            { name: 'Glauce Costa', specialty: 'Podóloga', image: 'https://res.cloudinary.com/dnez7rl46/image/upload/v1773600024/wdf4gnrwo9hdhz6c7ocv.png' }
         ];
         
+        // Adicionar serviços - sintaxe V12
         const servColl = collection(db, 'services');
         for (const s of servicosIniciais) {
             await addDoc(servColl, s);
         }
         
+        // Adicionar profissionais - sintaxe V12
         const profColl = collection(db, 'professionals');
         for (const p of profissionaisIniciais) {
             await addDoc(profColl, p);
@@ -94,7 +74,7 @@ async function criarDadosIniciais() {
     }
 }
 
-// ===== FUNÇÕES DE RENDERIZAÇÃO COM IMAGENS PADRONIZADAS =====
+// ===== FUNÇÕES DE RENDERIZAÇÃO =====
 function renderServices() {
     const container = document.getElementById('services-list');
     if (!container) return;
@@ -105,16 +85,15 @@ function renderServices() {
     }
     
     container.innerHTML = services.map(service => {
-        const imagemPadrao = padronizarImagem(service.image, 600, 400);
         const mensagem = `Olá! Gostaria de agendar ${service.name}.`;
         const linkWhatsApp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
         
         return `
             <div class="service-card">
-                <div class="service-img" style="background-image: url('${imagemPadrao}'); background-size: cover; background-position: center; width: 100%; height: 220px;"></div>
+                <div class="service-img" style="background-image: url('${service.image}')"></div>
                 <div class="service-content">
                     <h3>${service.name}</h3>
-                    <p class="service-price">R$: ${service.price}</p>
+                    <p class="service-price">R$:${service.price}</p>
                     <p>Duração: ${service.duration} min</p>
                     <a href="${linkWhatsApp}" target="_blank" class="btn whatsapp-btn">
                         <i class="fab fa-whatsapp"></i> Agendar via WhatsApp
@@ -135,11 +114,9 @@ function renderProfessionals() {
     }
     
     container.innerHTML = professionals.map(prof => {
-        const imagemPadrao = padronizarImagem(prof.image, 300, 300);
-        
         return `
             <div class="professional-card">
-                <div class="professional-img" style="background-image: url('${imagemPadrao}'); background-size: cover; background-position: center; width: 160px; height: 160px; border-radius: 50%; margin: 0 auto 1rem;"></div>
+                <div class="professional-img" style="background-image: url('${prof.image}')"></div>
                 <h3>${prof.name}</h3>
                 <p>Especialidade: ${prof.specialty}</p>
             </div>
@@ -157,7 +134,7 @@ function renderAdminTables() {
     const servicesAdminList = document.getElementById('services-admin-list');
     if (servicesAdminList) {
         if (!services || services.length === 0) {
-            servicesAdminList.innerHTML = '<td><td colspan="4">Nenhum serviço</td</tr>';
+            servicesAdminList.innerHTML = '<tr><td colspan="4">Nenhum serviço</td</tr>';
         } else {
             servicesAdminList.innerHTML = services.map(service => `
                 <tr>
@@ -270,15 +247,17 @@ async function saveService(event, id) {
         name: document.getElementById('service-name').value,
         price: parseFloat(document.getElementById('service-price').value),
         duration: parseInt(document.getElementById('service-duration').value),
-        image: document.getElementById('service-image').value || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&h=400&fit=crop'
+        image: document.getElementById('service-image').value || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500'
     };
     
     try {
         if (id && id !== 'null') {
+            // EDITAR - sintaxe V12
             const docRef = doc(db, 'services', id);
             await updateDoc(docRef, serviceData);
             alert('✅ Serviço atualizado!');
         } else {
+            // CRIAR - sintaxe V12
             const collRef = collection(db, 'services');
             await addDoc(collRef, serviceData);
             alert('✅ Serviço criado!');
@@ -294,6 +273,7 @@ async function deleteService(id) {
     if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja excluir este serviço?')) {
         try {
+            // DELETAR - sintaxe V12
             const docRef = doc(db, 'services', id);
             await deleteDoc(docRef);
             alert('✅ Serviço excluído!');
@@ -323,7 +303,7 @@ function openProfessionalModal(professional = null) {
             </div>
             <div class="form-group">
                 <label>URL da imagem</label>
-                <input type="url" id="professional-image" value="${professional ? professional.image : 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=300&h=300&fit=crop'}">
+                <input type="url" id="professional-image" value="${professional ? professional.image : 'https://images.unsplash.com/photo-1494790108777-466fd0c3a2b3?w=500'}">
             </div>
             <button type="submit" class="btn">Salvar</button>
         </form>
@@ -345,10 +325,12 @@ async function saveProfessional(event, id) {
     
     try {
         if (id && id !== 'null') {
+            // EDITAR - sintaxe V12
             const docRef = doc(db, 'professionals', id);
             await updateDoc(docRef, professionalData);
             alert('✅ Profissional atualizado!');
         } else {
+            // CRIAR - sintaxe V12
             const collRef = collection(db, 'professionals');
             await addDoc(collRef, professionalData);
             alert('✅ Profissional criado!');
@@ -364,6 +346,7 @@ async function deleteProfessional(id) {
     if (!checkAdminAuth()) return;
     if (confirm('Tem certeza que deseja excluir este profissional?')) {
         try {
+            // DELETAR - sintaxe V12
             const docRef = doc(db, 'professionals', id);
             await deleteDoc(docRef);
             alert('✅ Profissional excluído!');
@@ -392,6 +375,7 @@ function closeModal() {
 
 let avaliacoes = [];
 
+// Carregar avaliações do Firebase
 async function carregarAvaliacoes() {
     try {
         const avaliacoesQuery = collection(db, 'avaliacoes');
@@ -402,13 +386,16 @@ async function carregarAvaliacoes() {
             data: doc.data().data || new Date().toISOString()
         }));
         
+        // Ordenar por data (mais recentes primeiro)
         avaliacoes.sort((a, b) => new Date(b.data) - new Date(a.data));
+        
         renderAvaliacoes();
     } catch (erro) {
         console.error('Erro ao carregar avaliações:', erro);
     }
 }
 
+// Renderizar lista de avaliações
 function renderAvaliacoes() {
     const container = document.getElementById('lista-avaliacoes');
     if (!container) return;
@@ -430,11 +417,13 @@ function renderAvaliacoes() {
     `).join('');
 }
 
+// Formatar data
 function formatarData(dataISO) {
     const data = new Date(dataISO);
     return data.toLocaleDateString('pt-BR') + ' ' + data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 
+// Sistema de estrelas
 function initEstrelas() {
     const estrelas = document.querySelectorAll('#estrelas i');
     let notaSelecionada = 0;
@@ -452,6 +441,7 @@ function initEstrelas() {
         estrela.addEventListener('click', function() {
             notaSelecionada = parseInt(this.getAttribute('data-nota'));
             atualizarEstrelasTemporario(notaSelecionada);
+            // Marcar como permanente
             estrelas.forEach((e, i) => {
                 if (i < notaSelecionada) {
                     e.classList.add('permanente');
@@ -483,6 +473,7 @@ function initEstrelas() {
     }
 }
 
+// Enviar avaliação
 async function enviarAvaliacao() {
     const estrelas = document.querySelectorAll('#estrelas i');
     let nota = 0;
@@ -520,9 +511,11 @@ async function enviarAvaliacao() {
         
         alert('✅ Obrigado pela sua avaliação!');
         
+        // Limpar formulário
         document.getElementById('avaliacao-nome').value = '';
         document.getElementById('avaliacao-comentario').value = '';
         
+        // Resetar estrelas
         const estrelasReset = document.querySelectorAll('#estrelas i');
         estrelasReset.forEach(estrela => {
             estrela.classList.remove('permanente', 'fas');
@@ -530,6 +523,7 @@ async function enviarAvaliacao() {
             estrela.style.color = '#ddd';
         });
         
+        // Recarregar avaliações
         await carregarAvaliacoes();
         
     } catch (erro) {
@@ -538,6 +532,7 @@ async function enviarAvaliacao() {
     }
 }
 
+// Inicializar sistema de avaliação
 function initAvaliacoes() {
     const btnEnviar = document.getElementById('btn-enviar-avaliacao');
     if (btnEnviar) {
@@ -550,7 +545,7 @@ function initAvaliacoes() {
 // ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', function() {
     carregarDados();
-    initAvaliacoes();
+    initAvaliacoes(); // Inicializa o sistema de avaliações
     
     const heroButton = document.querySelector('.hero-buttons .btn:first-child');
     if (heroButton) {
@@ -572,4 +567,4 @@ window.onclick = function(event) {
     if (event.target == modal) {
         closeModal();
     }
-}
+} So jeita o tamanho das imagens 

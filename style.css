@@ -1054,3 +1054,80 @@ footer {
         margin-top: 65px;
     }
 }
+/* ========================================
+   CORREÇÃO DE IMAGENS PARA TODOS CELULARES
+   ======================================== */
+
+/* 1. FORÇA todas as imagens de serviço a terem o MESMO tamanho */
+.service-img {
+    width: 100% !important;
+    height: 220px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+/* 2. FORÇA todas as fotos dos profissionais */
+.professional-img {
+    width: 160px !important;
+    height: 160px !important;
+    min-width: 160px !important;
+    min-height: 160px !important;
+    max-width: 160px !important;
+    max-height: 160px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    border-radius: 50% !important;
+}
+
+/* 3. Garante que os cards tenham o mesmo tamanho */
+.service-card,
+.professional-card {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* 4. Força grid igual em todos dispositivos */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+/* 5. CORREÇÃO ESPECÍFICA PARA IPHONE */
+@supports (-webkit-touch-callout: none) {
+    .service-img {
+        -webkit-background-size: cover !important;
+    }
+    .professional-img {
+        -webkit-background-size: cover !important;
+    }
+}
+
+/* 6. Para telas muito pequenas */
+@media (max-width: 480px) {
+    .service-img {
+        height: 180px !important;
+    }
+    .professional-img {
+        width: 120px !important;
+        height: 120px !important;
+        min-width: 120px !important;
+        min-height: 120px !important;
+    }
+}
+
+/* 7. Para tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+    .service-img {
+        height: 200px !important;
+    }
+}
+
+/* 8. Para desktop */
+@media (min-width: 769px) {
+    .service-img {
+        height: 220px !important;
+    }
+}

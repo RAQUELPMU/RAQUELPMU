@@ -1065,3 +1065,66 @@ footer {
         font-size: 16px;
     }
 }
+/* ========================================
+   CORREÇÃO: MENU SEMPRE VISÍVEL EM TODAS ORIENTAÇÕES
+   ======================================== */
+
+/* Força o menu a ficar visível em pé e deitado */
+@media (max-width: 768px) {
+    /* Remove o display:none que estava escondendo o menu */
+    .nav-links {
+        display: flex !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.8rem;
+        margin-top: 0.5rem;
+    }
+    
+    /* Ajusta os links para ficarem menores e caberem na tela em pé */
+    .nav-links a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    
+    /* Ajuste do header para não ficar muito grande */
+    nav {
+        flex-direction: column;
+        padding: 0.5rem 1rem;
+    }
+    
+    .logo {
+        font-size: 1.4rem;
+        margin-bottom: 0.3rem;
+    }
+}
+
+/* Ajuste para telas muito pequenas (iPhone SE em pé) */
+@media (max-width: 480px) {
+    .nav-links {
+        gap: 0.5rem;
+    }
+    
+    .nav-links a {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* Para quando estiver deitado (horizontal) - mantém o menu bonito */
+@media (orientation: landscape) and (max-height: 500px) {
+    nav {
+        flex-direction: row;
+        padding: 0.3rem 1rem;
+    }
+    
+    .logo {
+        font-size: 1.2rem;
+        margin-bottom: 0;
+    }
+    
+    .nav-links a {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
